@@ -18,6 +18,18 @@ CLAW_LIFT_RANGE = 90
 claw_lift = LargeMotor(OUTPUT_D)
 claw      = MediumMotor(OUTPUT_A)
 tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
+
+ultrasound = UltrasonicSensor(INPUT_4)
+ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
+
+color_left = ColorSensor(INPUT_3)
+color_right = ColorSensor(INPUT_2)
+color_ball = ColorSensor(INPUT_1)
+color_left.mode = ColorSensor.MODE_COL_COLOR
+color_right.mode = ColorSensor.MODE_COL_COLOR
+color_ball.mode = ColorSensor.MODE_COL_REFLECT
+
+display = Display()
 buttons = Button()
 
 def force_claw_lift_down():
