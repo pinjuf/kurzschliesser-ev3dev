@@ -59,4 +59,12 @@ print("done.\nWaiting for start signal... ", end="")
 buttons.wait_for_bump("enter")
 print("received.")
 
+while True:
+    if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
+        tank_drive.stop()
+    elif ultrasound.distance_centimeters < 10:
+        tank_drive.stop()
+    else:
+        tank_drive.on(50, 50)
+
 print("Program finished.")
