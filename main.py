@@ -62,8 +62,24 @@ print("received.")
 while True:
     if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
         tank_drive.stop()
-    elif ultrasound.distance_centimeters < 10:
+    elif ultrasound.distance_centimeters < 6:
         tank_drive.stop()
+
+    elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
+        tank_drive.stop()
+        tank_drive.on(50, -25)
+        while color_left.color == ColorSensor.COLOR_BLACK:
+            sleep(0.01)
+        sleep(0.30)
+        tank_drive.on(50, 50)
+    elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
+        tank_drive.stop()
+        tank_drive.on(-25, 50)
+        while color_right.color == ColorSensor.COLOR_BLACK:
+            sleep(0.01)
+        sleep(0.30)
+        tank_drive.on(50, 50)
+
     else:
         tank_drive.on(50, 50)
 
