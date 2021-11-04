@@ -8,4 +8,4 @@
  3) CD into the Brick's FS: `cd $mountpoint`
  4) Clone this repo if not already done: `git clone https://github.com/pinjuf/kurzschliesser-ev3dev`
  5) You can now execute the `main.py` script using either Brickman (recommended) or `ssh robot@ev3dev.local ./kurzschliesser-ev3dev/main.py`
-    > The screen on ev3dev is usually reserved for Brickman. If you want to run it from SSH and neverless have access to the terminal, use `sudo chvt $N` and `sudo conspy` to bind your PTS to the screen. You can then revert back to the Brickman TTY.
+    > The screen on ev3dev is usually reserved for Brickman. If you want to run it from SSH and have access to the terminal, use `sudo chvt $N` and `sudo conspy` to bind your PTS to the screen. You can then revert back to the Brickman TTY.
