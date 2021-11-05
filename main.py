@@ -46,6 +46,8 @@ def force_claw_closed():
     claw.on(-100)
     while not claw.is_stalled:
         sleep(0.01)
+    claw.reset() # make post-stalling movement work befire final reset
+    claw.on_for_seconds(100, 0.5) # release pressure
     claw.reset()
 def set_claw(position):
     claw.on_to_position(
@@ -53,8 +55,8 @@ def set_claw(position):
             0 if position.lower()=="closed" else CLAW_RANGE)
 
 print("Initializing claw... ", end="")
-force_claw_closed()
 force_claw_lift_down()
+force_claw_closed()
 print("done.\nWaiting for start signal... ", end="")
 buttons.wait_for_bump("enter")
 print("received.")
@@ -62,7 +64,7 @@ print("received.")
 while True:
     if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
         tank_drive.stop()
-    elif ultrasound.distance_centimeters < 6:
+    elif ultrasound.distance_centimeters < 7.5:
         tank_drive.stop()
 
     elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
@@ -70,7 +72,7 @@ while True:
         tank_drive.on(50, -25)
         while color_left.color == ColorSensor.COLOR_BLACK:
             sleep(0.01)
-        sleep(0.30)
+        sleep(0.30) # time padding, make sure we are beyond the line
         tank_drive.on(50, 50)
     elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
         tank_drive.stop()
