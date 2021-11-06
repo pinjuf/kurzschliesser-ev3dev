@@ -57,16 +57,21 @@ def set_claw(position):
             0 if position.lower()=="closed" else CLAW_RANGE)
 
 def handle_intersection():
-    if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
-        sleep(0.05)
+    if color_left.color == ColorSensor.COLOR_BLACK and color_right == ColorSensor.COLOR_BLACK:
+        tank_drive.stop()
+        tank_drive.on_for_seconds(25, 25, 0.75)
+        return True
+    elif ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
+        sleep(0.15) # make sure we are totally on the markers
         tank_drive.stop()
         if color_left.color == ColorSensor.COLOR_GREEN and \
-           color_right.color != ColorSensor.COLOR_GREEN:
+           color_right.color == ColorSensor.COLOR_GREEN:
+               tank_drive.on_for_seconds(50, -50, 180/DPS_90)
+        elif color_left.color == ColorSensor.COLOR_GREEN:
                tank_drive.on_for_seconds(25, 25, 1.25)
                tank_drive.on_for_seconds(50, -50, 90/DPS_50)
                tank_drive.on_for_seconds(-25, -25, 0.5)
-        if color_right.color == ColorSensor.COLOR_GREEN and \
-           color_left.color != ColorSensor.COLOR_GREEN:
+        elif color_right.color == ColorSensor.COLOR_GREEN:
                tank_drive.on_for_seconds(25, 25, 1.25)
                tank_drive.on_for_seconds(-50, 50, 90/DPS_50)
                tank_drive.on_for_seconds(-25, -25, 0.5)
@@ -95,7 +100,8 @@ while True:
         tank_drive.stop()
         tank_drive.on(50, -25)
         while color_left.color == ColorSensor.COLOR_BLACK:
-            sleep(0.01)
+            if handle_intersection():
+                break
         start = time.time()
         while time.time()-start <= 0.3: # time padding with intersection
             if handle_intersection():
@@ -104,7 +110,8 @@ while True:
         tank_drive.stop()
         tank_drive.on(-25, 50)
         while color_right.color == ColorSensor.COLOR_BLACK:
-            sleep(0.01)
+            if handle_intersection():
+                break
         start = time.time()
         while time.time()-start <= 0.3:
             if handle_intersection():
