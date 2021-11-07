@@ -59,18 +59,25 @@ def set_claw(position):
             100,
             0 if position.lower()=="closed" else CLAW_RANGE)
 
+def snoop():
+    ...
+    # TODO: return 2-bit int: MSB = left / LSB = eight
+
 def handle_intersection():
     global check_for_black
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
         tank_drive.stop()
-        tank_drive.on_for_seconds(25, 25, 0.75)
-        tank_drive.on_for_seconds(50, -50, 0.2) # check if there is black
-        if color_right.color != ColorSensor.COLOR_BLACK:
-            tank_drive.on_for_seconds(-50, 50, 0.2)
-            tank_drive.on_for_seconds(-25, -25, 0.75)
-            check_for_black = 0
-            return False
-        return True
+        tank_drive.on_for_seconds(-25, -25, 40 * TIRE_CONST) # check if we missed green markers
+        # TODO: IMPLEMENT SNOOPING: THE ROBO SHOULD ROTATE AND CHECK IF HE FINDS ANY GREEN MARKERS HE MISSED BEFORE
+        if not ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
+            tank_drive.on_for_seconds(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
+            tank_drive.on_for_seconds(50, -50, 0.2) # rotate to check if there is black
+            if color_right.color != ColorSensor.COLOR_BLACK: # nothing found, move back
+                tank_drive.on_for_seconds(-50, 50, 0.2)
+                tank_drive.on_for_seconds(-25, -25, 70 * TIRE_CONST)
+                check_for_black = 0
+                return False
+            return True # found black line --> intersection
     if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
         sleep(0.1) # make sure we are totally on the markers
         tank_drive.stop()
