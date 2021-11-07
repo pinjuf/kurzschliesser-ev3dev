@@ -13,6 +13,9 @@ from ev3dev2.display import *
 print("done.")
 
 DPS_50 = 82.5 # degrees per second on full rotation with 50% power
+TIRE_RAD = 17.5 # mm
+
+TIRE_CONST = 1 / (2 * 3.14159 * TIRE_RAD)
 
 CLAW_RANGE   = 2500
 CLAW_LIFT_RANGE = 90
@@ -75,13 +78,13 @@ def handle_intersection():
            color_right.color == ColorSensor.COLOR_GREEN:
                tank_drive.on_for_seconds(50, -50, 180/DPS_90)
         elif color_left.color == ColorSensor.COLOR_GREEN:
-               tank_drive.on_for_seconds(25, 25, 1.25)
+               tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
                tank_drive.on_for_seconds(50, -50, 90/DPS_50)
-               tank_drive.on_for_seconds(-25, -25, 0.4)
+               tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
         elif color_right.color == ColorSensor.COLOR_GREEN:
-               tank_drive.on_for_seconds(25, 25, 1.25)
+               tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
                tank_drive.on_for_seconds(-50, 50, 90/DPS_50)
-               tank_drive.on_for_seconds(-25, -25, 0.4)
+               tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST)
         return True
     return False
 
