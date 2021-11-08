@@ -20,6 +20,10 @@ TIRE_CONST = 1 / (2 * 3.14159 * TIRE_RAD)
 CLAW_RANGE   = 2500
 CLAW_LIFT_RANGE = 90
 
+MARKER_FOUND_L = 0b10
+MARKER_FOUND_R = 0b01
+MARKER_FOUND_B = 0b11
+
 claw_lift = LargeMotor(OUTPUT_D)
 claw      = MediumMotor(OUTPUT_A)
 tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
@@ -59,17 +63,40 @@ def set_claw(position):
             100,
             0 if position.lower()=="closed" else CLAW_RANGE)
 
+<<<<<<< HEAD
 def snoop():
     ...
     # TODO: return 2-bit int: MSB = left / LSB = right
 
+=======
+def read_green_markers(): # read markers and return as 2-bit number bcuz i like complicated shit that i will hate myself for after
+    return ((color_left.color == ColorSensor.COLOR_GREEN) << 1) \
+          + (color_right.color == ColorSensor.COLOR_GREEN)
+
+def snoop(): # try finding a maximum amount of markers
+    output = read_green_markers()
+    tank_drive.on(-25, 25)
+    start = time.time()
+    while time.time() < start + 0.3: # move, if we find any more markers, simple binary OR them together
+        output |= read_green_markers()
+    tank_drive.on(25, -25)
+    start = time.time()
+    while time.time() < start + 0.3*2:
+        output |= read_green_markers()
+    tank_drive.on(-25, 25)
+    start = time.time()
+    while time.time() < start + 0.3:
+        output |= read_green_markers()
+    tank_drive.on(25, -25)
+    return output
+    
+>>>>>>> 098b906 (update .gitignore -> ignore *.err.log)
 def handle_intersection():
     global check_for_black
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
         tank_drive.stop()
         tank_drive.on_for_seconds(-25, -25, 40 * TIRE_CONST) # check if we missed green markers
-        # TODO: IMPLEMENT SNOOPING: THE ROBO SHOULD ROTATE AND CHECK IF HE FINDS ANY GREEN MARKERS HE MISSED BEFORE
-        if not ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
+        if not snoop():
             tank_drive.on_for_seconds(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
             tank_drive.on_for_seconds(50, -50, 0.2) # rotate to check if there is black
             if color_right.color != ColorSensor.COLOR_BLACK: # nothing found, move back
@@ -77,18 +104,17 @@ def handle_intersection():
                 tank_drive.on_for_seconds(-25, -25, 70 * TIRE_CONST)
                 check_for_black = 0
                 return False
-            return True # found black line --> intersection
+            return True # found black line --> intersection will be handled next loop
     if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
-        sleep(0.1) # make sure we are totally on the markers
         tank_drive.stop()
-        if color_left.color == ColorSensor.COLOR_GREEN and \
-           color_right.color == ColorSensor.COLOR_GREEN:
+        markers = snoop()
+        if markers == MARKER_FOUND_B:
                tank_drive.on_for_seconds(50, -50, 180/DPS_90)
-        elif color_left.color == ColorSensor.COLOR_GREEN:
+        elif markers == MARKER_FOUND_L:
                tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
                tank_drive.on_for_seconds(50, -50, 90/DPS_50)
                tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
-        elif color_right.color == ColorSensor.COLOR_GREEN:
+        elif markers == MARKER_FOUND_R:
                tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
                tank_drive.on_for_seconds(-50, 50, 90/DPS_50)
                tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST)
