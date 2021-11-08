@@ -91,10 +91,14 @@ def handle_intersection():
         tank_drive.on_for_seconds(-25, -25, 40 * TIRE_CONST) # check if we missed green markers
         if not snoop():
             tank_drive.on_for_seconds(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
-            tank_drive.on_for_seconds(50, -50, 0.2) # rotate to check if there is black
-            if color_right.color != ColorSensor.COLOR_BLACK: # nothing found, move back
-                tank_drive.on_for_seconds(-50, 50, 0.2)
-                tank_drive.on_for_seconds(-25, -25, 70 * TIRE_CONST)
+            start, found = time.time(), False
+            tank_drive.on(50, -50) # rotate to check if there is black
+            while time.time() < start + 0.4:
+                if color_right.color == ColorSensor.COLOR_BLACK:
+                    found = True
+            if not found: # nothing found, move back
+                tank_drive.on_for_seconds(-50, 50, 0.4)
+                tank_drive.on_for_seconds(-25, -25, 50 * TIRE_CONST)
                 check_for_black = 0
                 return False
             return True # found black line --> intersection will be handled next loop
