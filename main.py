@@ -61,7 +61,7 @@ def set_claw(position):
 
 def snoop():
     ...
-    # TODO: return 2-bit int: MSB = left / LSB = eight
+    # TODO: return 2-bit int: MSB = left / LSB = right
 
 def handle_intersection():
     global check_for_black
