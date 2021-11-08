@@ -63,6 +63,12 @@ def set_claw(position):
             100,
             0 if position.lower()=="closed" else CLAW_RANGE)
 
+<<<<<<< HEAD
+def snoop():
+    ...
+    # TODO: return 2-bit int: MSB = left / LSB = right
+
+=======
 def read_green_markers(): # read markers and return as 2-bit number bcuz i like complicated shit that i will hate myself for after
     return ((color_left.color == ColorSensor.COLOR_GREEN) << 1) \
           + (color_right.color == ColorSensor.COLOR_GREEN)
@@ -84,6 +90,7 @@ def snoop(): # try finding a maximum amount of markers
     tank_drive.on(25, -25)
     return output
     
+>>>>>>> 098b906 (update .gitignore -> ignore *.err.log)
 def handle_intersection():
     global check_for_black
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
