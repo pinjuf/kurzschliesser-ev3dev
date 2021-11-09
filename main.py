@@ -81,7 +81,6 @@ def snoop(): # try finding a maximum amount of markers
     start = time.time()
     while time.time() < start + 0.3:
         output |= read_green_markers()
-    tank_drive.on(25, -25)
     return output
     
 def handle_intersection():
@@ -99,13 +98,14 @@ def handle_intersection():
             if not found: # nothing found, move back
                 tank_drive.on_for_seconds(-50, 50, 0.4)
                 tank_drive.on_for_seconds(-25, -25, 50 * TIRE_CONST)
-                check_for_black = 0
+                check_for_black = False
                 return False
             return True # found black line --> intersection will be handled next loop
     if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
         tank_drive.stop()
         markers = snoop()
         if markers == MARKER_FOUND_B:
+               tank_drive.on_for_seconds(25, 25, 80 * TIRE_CONST)
                tank_drive.on_for_seconds(50, -50, 180/DPS_90)
         elif markers == MARKER_FOUND_L:
                tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
@@ -130,7 +130,7 @@ buttons.wait_for_bump("enter")
 print("received.")
 
 while True:
-    check_for_black = 1
+    check_for_black = True
     if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
         tank_drive.stop()
     elif ultrasound.distance_centimeters < 9:
