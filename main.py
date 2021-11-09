@@ -96,6 +96,7 @@ def handle_intersection():
             while time.time() < start + 0.4:
                 if color_right.color == ColorSensor.COLOR_BLACK:
                     found = True
+                    break
             if not found: # nothing found, move back
                 tank_drive.on_for_seconds(-50, 50, 0.4)
                 tank_drive.on_for_seconds(-25, -25, 50 * TIRE_CONST)
