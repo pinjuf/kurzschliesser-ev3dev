@@ -12,7 +12,8 @@ from ev3dev2.button import *
 from ev3dev2.display import *
 print("done.")
 
-DPS_50 = 82.5 # degrees per second on full rotation with 50% power
+DPS = 1.65 # degrees per second on 1% power
+DPS_50 = DPS * 50 # dps on 50% power
 TIRE_RAD = 17.5 # mm
 
 TIRE_CONST = 1 / (2 * 3.14159 * TIRE_RAD)
