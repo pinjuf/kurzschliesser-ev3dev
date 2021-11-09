@@ -65,7 +65,7 @@ def set_claw(position):
 
 def read_green_markers(): # read markers and return as 2-bit number bcuz i like complicated shit that i will hate myself for after
     return ((color_left.color == ColorSensor.COLOR_GREEN) << 1) \
-          + (color_right.color == ColorSensor.COLOR_GREEN)
+          | (color_right.color == ColorSensor.COLOR_GREEN)
 
 def snoop(): # try finding a maximum amount of markers
     output = read_green_markers()
