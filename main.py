@@ -15,6 +15,7 @@ print("done.")
 DPS = 1.65 # degrees per second on 1% power
 DPS_50 = DPS * 50 # dps on 50% power
 TIRE_RAD = 17.5 # mm
+TIME_CONST = 1 # TODO TEMPORARY! USED FOR TIMED ROTATION! TO BE REPLACED WITH POSITIONAL INPUT INSTEAD OF TIME
 
 TIRE_CONST = 1 / (2 * 3.14159 * TIRE_RAD)
 
@@ -72,15 +73,15 @@ def snoop(): # try finding a maximum amount of markers
     output = read_green_markers()
     tank_drive.on(-25, 25)
     start = time.time()
-    while time.time() < start + 0.3: # move, if we find any more markers, simple binary OR them together
+    while time.time() <= start + 0.3 * TIME_CONST: # move, if we find any more markers, simple binary OR them together
         output |= read_green_markers()
     tank_drive.on(25, -25)
     start = time.time()
-    while time.time() < start + 0.3*2:
+    while time.time() <= start + 0.3*2 * TIME_CONST:
         output |= read_green_markers()
     tank_drive.on(-25, 25)
     start = time.time()
-    while time.time() < start + 0.3:
+    while time.time() <= start + 0.3 * TIME_CONST:
         output |= read_green_markers()
     return output
     
@@ -93,12 +94,12 @@ def handle_intersection():
             tank_drive.on_for_seconds(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
             start, found = time.time(), False
             tank_drive.on(50, -50) # rotate to check if there is black
-            while time.time() < start + 0.4:
+            while time.time() <= start + 0.4 * TIME_CONST:
                 if color_right.color == ColorSensor.COLOR_BLACK:
                     found = True
                     break
             if not found: # nothing found, move back
-                tank_drive.on_for_seconds(-50, 50, 0.4)
+                tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
                 tank_drive.on_for_seconds(-25, -25, 50 * TIRE_CONST)
                 check_for_black = False
                 return False
@@ -108,14 +109,14 @@ def handle_intersection():
         markers = snoop()
         if markers == MARKER_FOUND_B:
                tank_drive.on_for_seconds(25, 25, 80 * TIRE_CONST)
-               tank_drive.on_for_seconds(50, -50, 180/DPS_90)
+               tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
         elif markers == MARKER_FOUND_L:
                tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-               tank_drive.on_for_seconds(50, -50, 90/DPS_50)
+               tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))
                tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
         elif markers == MARKER_FOUND_R:
                tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-               tank_drive.on_for_seconds(-50, 50, 90/DPS_50)
+               tank_drive.on_for_seconds(-50, 50, 90/(DPS * 50))
                tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST)
         return True
     return False
@@ -136,7 +137,7 @@ while True:
     if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
         tank_drive.stop()
     elif ultrasound.distance_centimeters < 9:
-        tank_drive.on_for_seconds(50, -50, 180/DPS_50)
+        tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
 
     elif handle_intersection():
         continue
@@ -148,7 +149,7 @@ while True:
                 break
             tank_drive.on(50, -25)
         start = time.time()
-        while time.time()-start <= 0.3: # time padding
+        while time.time()-start <= 0.3 * TIME_CONST: # time padding
             if handle_intersection():
                 break
             tank_drive.on(50, -25)
@@ -159,11 +160,10 @@ while True:
                 break
             tank_drive.on(-25, 50)
         start = time.time()
-        while time.time()-start <= 0.3:
+        while time.time()-start <= 0.3 * TIME_CONST:
             if handle_intersection():
                 break
             tank_drive.on(-25, 50)
-        tank_drive.on(50, 50)
 
     else:
         tank_drive.on(50, 50)
