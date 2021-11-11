@@ -12,7 +12,7 @@ from ev3dev2.button import *
 from ev3dev2.display import *
 print("done.")
 
-DPS = 1.65 # degrees per second on 1% power
+DPS = 1.46 # degrees per second on 1% power
 TIRE_RAD = 17.5 # mm
 TIME_CONST = 1 # TODO TEMPORARY! USED FOR TIMED ROTATION! TO BE REPLACED WITH POSITIONAL INPUT INSTEAD OF TIME
 
@@ -102,6 +102,7 @@ def handle_intersection():
                 tank_drive.on_for_seconds(-25, -25, 50 * TIRE_CONST)
                 check_for_black = False
                 return False
+            tank_drive.off()
             return True # found black line --> intersection will be handled next loop
     if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
         tank_drive.stop()
@@ -112,11 +113,11 @@ def handle_intersection():
         elif markers == MARKER_FOUND_L:
                tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
                tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))
-               tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
+               tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
         elif markers == MARKER_FOUND_R:
                tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
                tank_drive.on_for_seconds(-50, 50, 90/(DPS * 50))
-               tank_drive.on_for_rotations(-25, -25, 10 * TIRE_CONST)
+               tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
         return True
     return False
 
@@ -133,6 +134,7 @@ print("received.")
 
 while True:
     check_for_black = True
+    broken = False
     if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
         tank_drive.stop()
     elif ultrasound.distance_centimeters < 9:
@@ -145,8 +147,11 @@ while True:
         tank_drive.stop()
         while color_left.color == ColorSensor.COLOR_BLACK:
             if handle_intersection(): # check for intersection
+                broken = True
                 break
             tank_drive.on(50, -25)
+        if broken:
+            continue
         start = time.time()
         while time.time()-start <= 0.3 * TIME_CONST: # time padding
             if handle_intersection():
@@ -156,8 +161,11 @@ while True:
         tank_drive.stop()
         while color_right.color == ColorSensor.COLOR_BLACK:
             if handle_intersection():
+                broken = True
                 break
             tank_drive.on(-25, 50)
+        if broken:
+            continue
         start = time.time()
         while time.time()-start <= 0.3 * TIME_CONST:
             if handle_intersection():
