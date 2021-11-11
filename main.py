@@ -12,7 +12,7 @@ from ev3dev2.button import *
 from ev3dev2.display import *
 print("done.")
 
-DPS = 1.46 # degrees per second on 1% power
+DPS = 2.0 # degrees per second on 1% power
 TIRE_RAD = 17.5 # mm
 TIME_CONST = 1 # TODO TEMPORARY! USED FOR TIMED ROTATION! TO BE REPLACED WITH POSITIONAL INPUT INSTEAD OF TIME
 
