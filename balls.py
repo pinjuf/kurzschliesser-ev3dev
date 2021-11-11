@@ -21,7 +21,6 @@ def check_for_ball:
 
 
 def search:
-    ball_found = false
     tank_drive.on(50, 50)
     while ball_found == false:
         if ultrasound.distance_centimeters < 9:  #TURN RIGHT TWICE
