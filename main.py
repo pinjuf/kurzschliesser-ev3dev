@@ -19,7 +19,7 @@ TIME_CONST = 1 # TODO TEMPORARY! USED FOR TIMED ROTATION! TO BE REPLACED WITH PO
 TIRE_CONST = 1 / (2 * 3.14159 * TIRE_RAD)
 
 CLAW_RANGE   = 2500
-CLAW_LIFT_RANGE = 90
+CLAW_LIFT_RANGE = 110
 
 MARKER_FOUND_L = 0b10
 MARKER_FOUND_R = 0b01
@@ -70,6 +70,7 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
 
 def snoop(): # try finding a maximum amount of markers
     output = read_green_markers()
+    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)
     tank_drive.on(-25, 25)
     start = time.time()
     while time.time() <= start + 0.3 * TIME_CONST: # move, if we find any more markers, simple binary OR them together
@@ -82,6 +83,7 @@ def snoop(): # try finding a maximum amount of markers
     start = time.time()
     while time.time() <= start + 0.3 * TIME_CONST:
         output |= read_green_markers()
+    tank_drive.on_for_seconds(-50, -50, 5 * TIRE_CONST)
     return output
     
 def handle_intersection():
