@@ -80,7 +80,7 @@ def snoop(): # try finding a maximum amount of markers
     while color_right.color != ColorSensor.COLOR_BLACK and start <= time.time() + 0.8:
         output |= read_green_markers()
     total2 = time.time() - start
-    tank_drive.on_for_seconds(-25, 25, total2-total1)
+    tank_drive.on_for_seconds(-25, 25, abs(total2-total1))
     return output
     
 def handle_snooped(snooped):
