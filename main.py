@@ -71,7 +71,7 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
           | (color_right.color == ColorSensor.COLOR_GREEN)
 
 def snoop(): # try finding a maximum amount of markers
-    sound.beep()
+    sound.beep() # emotional support beep
     output = read_green_markers()
     tank_drive.on(-25, 25) # turn right
     start = time.time()
