@@ -41,6 +41,8 @@ color_ball.mode = ColorSensor.MODE_COL_REFLECT
 
 display = Display()
 buttons = Button()
+sound = Sound()
+leds = Led()
 
 def force_claw_lift_down():
     claw_lift.on(-25)
@@ -69,18 +71,22 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
           | (color_right.color == ColorSensor.COLOR_GREEN)
 
 def snoop(): # try finding a maximum amount of markers
+    sound.beep()
     output = read_green_markers()
     tank_drive.on(-25, 25) # turn right
     start = time.time()
-    while color_left.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.4:
+    while color_left.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.4 * TIME_CONST:
         output |= read_green_markers()
     total1 = time.time() - start
     tank_drive.on(25, -25)
     start = time.time()
-    while color_right.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.8:
+    while color_right.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.8 * TIME_CONST:
         output |= read_green_markers()
     total2 = time.time() - start
-    tank_drive.on_for_seconds(-25, 25, abs(total2-total1))
+    if total2-total1 >= 0:
+        tank_drive.on_for_seconds(-25, 25, total2-total1)
+    if total2-total1 < 0:
+        tank_drive.on_for_seconds(25, -25, total1-total2)
     return output
     
 def handle_snooped(snooped):
