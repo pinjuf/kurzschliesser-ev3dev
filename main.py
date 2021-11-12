@@ -72,12 +72,12 @@ def snoop(): # try finding a maximum amount of markers
     output = read_green_markers()
     tank_drive.on(-25, 25) # turn right
     start = time.time()
-    while color_left.color != ColorSensor.COLOR_BLACK and start <= time.time() + 0.4:
+    while color_left.color != ColorSensor.COLOR_BLACK and start >= time.time() + 0.4:
         output |= read_green_markers()
     total1 = time.time() - start
     tank_drive.on(25, -25)
     start = time.time()
-    while color_right.color != ColorSensor.COLOR_BLACK and start <= time.time() + 0.8:
+    while color_right.color != ColorSensor.COLOR_BLACK and start >= time.time() + 0.8:
         output |= read_green_markers()
     total2 = time.time() - start
     tank_drive.on_for_seconds(-25, 25, abs(total2-total1))
