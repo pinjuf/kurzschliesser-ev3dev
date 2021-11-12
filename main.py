@@ -70,23 +70,35 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
 
 def snoop(): # try finding a maximum amount of markers
     output = read_green_markers()
-    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)
-    tank_drive.on(-25, 25)
+    tank_drive.on(-25, 25) # turn right
     start = time.time()
-    while time.time() <= start + 0.3 * TIME_CONST: # move, if we find any more markers, simple binary OR them together
+    while color_left.color != ColorSensor.COLOR_BLACK and start <= time.time() + 0.4:
         output |= read_green_markers()
+    total1 = time.time() - start
     tank_drive.on(25, -25)
     start = time.time()
-    while time.time() <= start + 0.3*2 * TIME_CONST:
+    while color_right.color != ColorSensor.COLOR_BLACK and start <= time.time() + 0.8:
         output |= read_green_markers()
-    tank_drive.on(-25, 25)
-    start = time.time()
-    while time.time() <= start + 0.3 * TIME_CONST:
-        output |= read_green_markers()
-    tank_drive.on_for_seconds(-50, -50, 5 * TIRE_CONST)
+    total2 = time.time() - start
+    tank_drive.on_for_seconds(-25, 25, total2-total1)
     return output
     
-def handle_intersection():
+def handle_snooped(snooped):
+    if snooped == MARKER_FOUND_B:
+       tank_drive.on_for_seconds(25, 25, 80 * TIRE_CONST)
+       tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
+       tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
+    elif snooped == MARKER_FOUND_L:
+       tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
+       tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))
+       tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
+    elif snooped == MARKER_FOUND_R:
+       tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
+       tank_drive.on_for_seconds(-50, 50, 90/(DPS * 50))
+       tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
+    tank_drive.off()
+
+def handle_intersection(): # move back to be closer to the intersection b4 starting again
     global check_for_black
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
         tank_drive.stop()
@@ -95,31 +107,24 @@ def handle_intersection():
             tank_drive.on_for_seconds(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
             start, found = time.time(), False
             tank_drive.on(50, -50) # rotate to check if there is black
-            while time.time() <= start + 0.6 * TIME_CONST:
+            while time.time() <= start + 0.4 * TIME_CONST:
                 if color_right.color == ColorSensor.COLOR_BLACK:
                     found = True
                     break
             if not found: # nothing found, move back
-                tank_drive.on_for_seconds(-50, 50, 0.6 * TIME_CONST)
+                tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
                 tank_drive.on_for_seconds(-25, -25, 50 * TIRE_CONST)
                 check_for_black = False
                 return False
             tank_drive.off()
-            return True # found black line --> intersection will be handled next loop
+            markers = snoop()
+            if markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
+                handle_snooped(markers)
+            return True
     if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
         tank_drive.stop()
         markers = snoop()
-        if markers == MARKER_FOUND_B:
-               tank_drive.on_for_seconds(25, 25, 80 * TIRE_CONST)
-               tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
-        elif markers == MARKER_FOUND_L:
-               tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-               tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))
-               tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
-        elif markers == MARKER_FOUND_R:
-               tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-               tank_drive.on_for_seconds(-50, 50, 90/(DPS * 50))
-               tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
+        handle_snooped(markers)
         return True
     return False
 
