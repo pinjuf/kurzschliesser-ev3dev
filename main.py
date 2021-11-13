@@ -135,57 +135,60 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
     return False
 
 
+def main():
+    print("Initializing claw... ", end="")
+    force_claw_lift_down()
+    set_claw_lift("up")
+    force_claw_closed()
+    set_claw("open")
+    print("done.\nWaiting for start signal... ", end="")
+    buttons.wait_for_bump("enter")
+    print("received.")
 
-print("Initializing claw... ", end="")
-force_claw_lift_down()
-set_claw_lift("up")
-force_claw_closed()
-set_claw("open")
-print("done.\nWaiting for start signal... ", end="")
-buttons.wait_for_bump("enter")
-print("received.")
+    while True:
+        check_for_black = True
+        broken = False
+        if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
+            tank_drive.stop()
+        elif ultrasound.distance_centimeters < 9:
+            tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
 
-while True:
-    check_for_black = True
-    broken = False
-    if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]:
-        tank_drive.stop()
-    elif ultrasound.distance_centimeters < 9:
-        tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
-
-    elif handle_intersection():
-        continue
-
-    elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
-        tank_drive.stop()
-        while color_left.color == ColorSensor.COLOR_BLACK:
-            if handle_intersection(): # check for intersection
-                broken = True
-                break
-            tank_drive.on(50, -25)
-        if broken:
+        elif handle_intersection():
             continue
-        start = time.time()
-        while time.time()-start <= 0.3 * TIME_CONST: # time padding
-            if handle_intersection():
-                break
-            tank_drive.on(50, -25)
-    elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
-        tank_drive.stop()
-        while color_right.color == ColorSensor.COLOR_BLACK:
-            if handle_intersection():
-                broken = True
-                break
-            tank_drive.on(-25, 50)
-        if broken:
-            continue
-        start = time.time()
-        while time.time()-start <= 0.3 * TIME_CONST:
-            if handle_intersection():
-                break
-            tank_drive.on(-25, 50)
 
-    else:
-        tank_drive.on(50, 50)
+        elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
+            tank_drive.stop()
+            while color_left.color == ColorSensor.COLOR_BLACK:
+                if handle_intersection(): # check for intersection
+                    broken = True
+                    break
+                tank_drive.on(50, -25)
+            if broken:
+                continue
+            start = time.time()
+            while time.time()-start <= 0.3 * TIME_CONST: # time padding
+                if handle_intersection():
+                    break
+                tank_drive.on(50, -25)
+        elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
+            tank_drive.stop()
+            while color_right.color == ColorSensor.COLOR_BLACK:
+                if handle_intersection():
+                    broken = True
+                    break
+                tank_drive.on(-25, 50)
+            if broken:
+                continue
+            start = time.time()
+            while time.time()-start <= 0.3 * TIME_CONST:
+                if handle_intersection():
+                    break
+                tank_drive.on(-25, 50)
 
-print("Program finished.")
+        else:
+            tank_drive.on(50, 50)
+
+    print("Program finished.")
+
+if __name__ == "__main__":
+    main()
