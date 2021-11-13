@@ -17,6 +17,8 @@ ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light
 direction = 1               #used to turn in right direction after line finished
 victim_count = 0       #there are two alive victims to get
 
+
+
 def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
 
@@ -40,7 +42,6 @@ def release_ball():
     set_claw("closed")          #close claws
     set_claw_lift("up")
     return
-
 
 def search_release_area():
     tank_drive.on(50, 50)
@@ -66,7 +67,6 @@ def handle_dead_victim():    #check if object is wall or dead victim
         tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)
         tank_drive.on_for_seconds(50, -50, 90 /(DPS * 50))
 
-
 def is_on_border_line(check_black):
     #TODO: check if silver counts as gray, if not change mode to reflect to check it
     return ((color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK) if check_black else False) or color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.COLOR_GREEN or color_left.color == ColorSensor.COLOR_GREEN
@@ -78,6 +78,8 @@ def next_line():
     tank_drive.on_for_seconds(50, -50, (90 if direction==0 else -90)/(DPS * 50))       #turn 90 degres
     tank_drive.on(50, 50)                                                               #start main movement
     direction = 1-direction
+
+
 
 def search():
     tank_drive.on(50, 50)
