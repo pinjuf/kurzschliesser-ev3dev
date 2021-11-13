@@ -15,7 +15,7 @@ REFLECTION_LIMIT = 50       #Limit of dead and alive balls
 ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light sensor
 
 direction = 1               #used to turn in right direction after line finished
-live_victim_count = 0       #there are two alive victims to get
+victim_count = 0       #there are two alive victims to get
 
 def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
