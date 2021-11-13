@@ -17,8 +17,6 @@ ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light
 direction = 1               #used to turn in right direction after line finished
 victim_count = 0       #there are two alive victims to get
 
-
-
 def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
 
@@ -84,6 +82,7 @@ def next_line():
 
 
 def search():
+    color_ball.mode = ColorSensor.Mhttps://github.com/pinjuf/kurzschliesser-ev3dev/blob/main/balls.pyODE_COL_REFLECT
     tank_drive.on(50, 50)
     while victim_count < 2:
         if is_on_border_line(True): #Drive back -> next line
