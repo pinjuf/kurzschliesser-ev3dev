@@ -9,28 +9,13 @@ from ev3dev2.led import *
 from ev3dev2.sound import *
 from ev3dev2.button import *
 from ev3dev2.display import *
-from main import set_claw, set_claw_lift
+from main import *
 
 REFLECTION_LIMIT = 50       #Limit of dead and alive balls
 ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light sensor
 
 direction = 1               #used to turn in right direction after line finished
 live_victim_count = 0       #there are two alive victims to get
-
-tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
-claw_lift = LargeMotor(OUTPUT_D)
-claw      = MediumMotor(OUTPUT_A)
-
-ultrasound = UltrasonicSensor(INPUT_4)
-ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
-
-color_left = ColorSensor(INPUT_3)
-color_right = ColorSensor(INPUT_2)
-color_ball = ColorSensor(INPUT_1)
-color_left.mode = ColorSensor.MODE_COL_COLOR
-color_right.mode = ColorSensor.MODE_COL_COLOR
-color_ball.mode = ColorSensor.MODE_COL_REFLECT
-
 
 def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
@@ -83,7 +68,6 @@ def handle_dead_victim():    #check if object is wall or dead victim
         tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)
         tank_drive.on_for_seconds(50, -50, 90 /(DPS * 50))
 
-
 def is_on_border_line(check_black):
     #TODO: check if silver counts as gray, if not change mode to reflect to check it
     return ((color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK) if check_black else False) or color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.COLOR_GREEN or color_left.color == ColorSensor.COLOR_GREEN
@@ -111,3 +95,4 @@ def search():
                 next_line()
             else:
                 handle_dead_victim()
+    
