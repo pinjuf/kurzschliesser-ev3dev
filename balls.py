@@ -14,6 +14,8 @@ REFLECTION_LIMIT = 50   #Limit of dead and alive balls
 ULATRASOUND_DISTANCE = 2; #Distance to wall/ball in cm to see ball using light sensor
 
 tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
+claw_lift = LargeMotor(OUTPUT_D)
+claw      = MediumMotor(OUTPUT_A)
 
 ultrasound = UltrasonicSensor(INPUT_4)
 ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
@@ -25,6 +27,10 @@ def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
 
 def grab_ball():
+    #drive back and turn 180 degrees
+    tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)
+    tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
+    tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)
     #TODO: implement ball grabbing with claws
     return
 
