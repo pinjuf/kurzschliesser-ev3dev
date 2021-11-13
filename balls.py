@@ -44,12 +44,14 @@ def release_ball():
     return
 
 def search_release_area():
+    color_ball.mode = ColorSensor.MODE_COL_COLOR            #change to color mode
     tank_drive.on(50, 50)
     while True:
         if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE or is_on_border_line:
                 tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))                   #turn 90 degres
                 tank_drive.on(50, 50)
-        if color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK:
+        if color_ball.color == ColorSensor.COLOR_BLACK:
+            color_ball.mode = ColorSensor.MODE_COL_REFLECT
             return
 
 def handle_dead_victim():    #check if object is wall or dead victim
