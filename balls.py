@@ -47,19 +47,24 @@ def grab_ball():
     return
 
 def search_release_area():
-    #TODO: find fast algorithm to find black line
-    return
+    tank_drive.on(50, 50)
+    while True:
+        if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE or is_on_border_line:
+                tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))                   #turn 90 degres
+                tank_drive.on(50, 50)
+        if color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK:
+            return
 
 def is_on_border_line(check_black):
     #TODO: check if silver counts as gray, if not change mode to reflect to check it
     return ((color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK) if check_black else False) or color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.COLOR_GREEN or color_left.color == ColorSensor.COLOR_GREEN
 
 def next_line():
-    tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)  #drive back
-    tank_drive.on_for_seconds(50, -50, (90 if direction==0 else -90) /(DPS * 50))       #turn 90 degres
-    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)     #drive forward to next line
+    tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)                              #drive back
+    tank_drive.on_for_seconds(50, -50, (90 if direction==0 else -90) /(DPS * 50))      #turn 90 degres
+    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)                                #drive forward to next line
     tank_drive.on_for_seconds(50, -50, (90 if direction==0 else -90)/(DPS * 50))       #turn 90 degres
-    tank_drive.on(50, 50)                                   #start main movement
+    tank_drive.on(50, 50)                                                               #start main movement
     direction = 1-direction
 
 def search():
