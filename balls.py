@@ -46,11 +46,12 @@ def grab_ball():
     set_claw_lift("up")
     return
 
-def search_release_area():
+def search_evacuation_zone():
     #TODO: find fast algorithm to find black line
     return
 
 def is_on_border_line(check_black):
+    #TODO: check if silver counts as gray, if not change mode to reflect to check it
     return ((color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK) if check_black else False) or color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.GREEN or color_left.color == ColorSensor.GREEN
 
 def next_line():
@@ -69,6 +70,6 @@ def search():
         if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE:  # check for ball/wall
             if check_for_ball():
                 grab_ball()
-                search_release_area()
+                search_evacuation_zone()
             else:   #turn right twice
                 next_line()
