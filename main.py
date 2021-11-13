@@ -58,7 +58,7 @@ def force_claw_closed():
     claw.on(-100)
     while not claw.is_stalled:
         sleep(0.01)
-    claw.reset() # make post-stalling movement work befire final reset
+    claw.reset() # make post-stalling movement work before final reset
     claw.on_for_seconds(100, 0.5) # release pressure
     claw.reset()
 def set_claw(position):
