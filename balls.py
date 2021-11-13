@@ -14,7 +14,7 @@ from main import set_claw, set_claw_lift
 REFLECTION_LIMIT = 50       #Limit of dead and alive balls
 ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light sensor
 
-direction = 0               #used to turn in right direction after line finished
+direction = 1               #used to turn in right direction after line finished
 
 tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
 claw_lift = LargeMotor(OUTPUT_D)
