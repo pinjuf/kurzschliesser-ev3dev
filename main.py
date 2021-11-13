@@ -136,6 +136,7 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
 
 
 def main():
+    global check_for_black
     print("Initializing claw... ", end="")
     force_claw_lift_down()
     set_claw_lift("up")
