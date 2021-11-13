@@ -11,6 +11,7 @@ from ev3dev2.button import *
 from ev3dev2.display import *
 
 REFLECTION_LIMIT = 50   #Limit of dead and alive balls
+ULATRASOUND_DISTANCE = 2; #Distance to wall/ball in cm to see ball using light sensor
 
 tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
 
@@ -30,7 +31,7 @@ def grab_ball():
 def search():
     tank_drive.on(50, 50)
     while ball_found == false:
-        if ultrasound.distance_centimeters < 3:  # Check for ball/wall
+        if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE:  # Check for ball/wall
             if check_for_ball():
                 grab_ball();
             else:   #turn right twice
