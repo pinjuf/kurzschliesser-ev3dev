@@ -39,19 +39,16 @@ def grab_ball():
     set_claw_lift("up")
     return
 
-def inBallArea():
-    #TODO: check if robo is still in ball area
-    return True
+def search_release_area():
+    return
 
 def search():
     tank_drive.on(50, 50)
     while ball_found == false:
-        if inBallArea == False:
-            tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))       #turn 90 degres
-            tank_drive.on(50, 50)                                   #start main movement
         if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE:  # check for ball/wall
             if check_for_ball():
                 grab_ball()
+                search_release_area()
             else:   #turn right twice
                 #tank_drive.off()
                 tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)  #drive back to avoid wall contact
