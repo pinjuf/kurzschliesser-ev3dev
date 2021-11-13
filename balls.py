@@ -48,8 +48,8 @@ def search_release_area():
     tank_drive.on(50, 50)
     while True:
         if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE or is_on_border_line:
-                tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))                   #turn 90 degres
-                tank_drive.on(50, 50)
+            tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))                   #turn 90 degres
+            tank_drive.on(50, 50)
         if color_ball.color == ColorSensor.COLOR_BLACK:
             color_ball.mode = ColorSensor.MODE_COL_REFLECT
             return
