@@ -46,7 +46,7 @@ def grab_ball():
     set_claw_lift("up")
     return
 
-def search_evacuation_zone():
+def search_release_area():
     #TODO: find fast algorithm to find black line
     return
 
@@ -70,6 +70,6 @@ def search():
         if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE:  # check for ball/wall
             if check_for_ball():
                 grab_ball()
-                search_evacuation_zone()
+                search_release_area()
             else:   #turn right twice
                 next_line()
