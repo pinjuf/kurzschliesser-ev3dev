@@ -50,8 +50,8 @@ def search_release_area():
     #TODO: find fast algorithm to find black line
     return
 
-def is_on_border_line():
-    return color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.GREEN or color_left.color == ColorSensor.GREEN
+def is_on_border_line(check_black):
+    return ((color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK) if check_black else False) or color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.GREEN or color_left.color == ColorSensor.GREEN
 
 def next_line():
     tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)  #drive back
@@ -64,7 +64,7 @@ def next_line():
 def search():
     tank_drive.on(50, 50)
     while ball_found == false:
-        if is_on_border_line(): #Drive back -> next line
+        if is_on_border_line(True): #Drive back -> next line
             next_line()
         if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE:  # check for ball/wall
             if check_for_ball():
