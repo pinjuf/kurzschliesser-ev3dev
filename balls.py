@@ -68,6 +68,22 @@ def search_release_area():
         if color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK:
             return
 
+def handle_dead_victim():    #check if object is wall or dead victim
+    tank_drive.on_for_seconds(50, -50, 90 /(DPS * 50))              #turn 90 degres
+    tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)            #drive away from dead ball (if it is)
+    tank_drive.on_for_seconds(50, -50, -90 /(DPS * 50))             #turn 90 degres
+    if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE:      #check if wall
+        tank_drive.on_for_seconds(50, -50, -90 /(DPS * 50))
+        tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)        #drive back
+        tank_drive.on_for_seconds(50, -50, 90 /(DPS * 50))
+        next_line()
+    else:
+        tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)        #drive around
+        tank_drive.on_for_seconds(50, -50, -90 /(DPS * 50))
+        tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)
+        tank_drive.on_for_seconds(50, -50, 90 /(DPS * 50))
+
+
 def is_on_border_line(check_black):
     #TODO: check if silver counts as gray, if not change mode to reflect to check it
     return ((color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK) if check_black else False) or color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.COLOR_GREEN or color_left.color == ColorSensor.COLOR_GREEN
@@ -93,3 +109,5 @@ def search():
                 victim_count += 1
                 tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)    #drive forward to next away from black line
                 next_line()
+            else:
+                handle_dead_victim()
