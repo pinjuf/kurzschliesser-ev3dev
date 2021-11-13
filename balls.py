@@ -46,6 +46,18 @@ def grab_ball():
     set_claw_lift("up")
     return
 
+def release_ball():
+    #turn 180 degrees
+    tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
+
+    set_claw_lift("down")       #open claws
+    set_claw("open")
+    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)   #drive away
+    set_claw("closed")          #close claws
+    set_claw_lift("up")
+    return
+
+
 def search_release_area():
     tank_drive.on(50, 50)
     while True:
@@ -76,5 +88,6 @@ def search():
             if check_for_ball():
                 grab_ball()
                 search_release_area()
-            else:   #turn right twice
+                release_ball()
+                tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)    #drive forward to next away from black line
                 next_line()
