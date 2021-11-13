@@ -15,6 +15,7 @@ REFLECTION_LIMIT = 50       #Limit of dead and alive balls
 ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light sensor
 
 direction = 1               #used to turn in right direction after line finished
+live_victim_count = 0       #there are two alive victims to get
 
 tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
 claw_lift = LargeMotor(OUTPUT_D)
@@ -81,7 +82,7 @@ def next_line():
 
 def search():
     tank_drive.on(50, 50)
-    while ball_found == false:
+    while victim_count < 2:
         if is_on_border_line(True): #Drive back -> next line
             next_line()
         if ultrasound.distance_centimeters < ULATRASOUND_DISTANCE:  # check for ball/wall
@@ -89,5 +90,6 @@ def search():
                 grab_ball()
                 search_release_area()
                 release_ball()
+                victim_count += 1
                 tank_drive.on_for_rotations(50, 50, 10 * TIRE_CONST)    #drive forward to next away from black line
                 next_line()
