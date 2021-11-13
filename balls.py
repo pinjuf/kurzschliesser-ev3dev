@@ -82,7 +82,7 @@ def next_line():
 
 
 def search():
-    color_ball.mode = ColorSensor.Mhttps://github.com/pinjuf/kurzschliesser-ev3dev/blob/main/balls.pyODE_COL_REFLECT
+    color_ball.mode = ColorSensor.MODE_COL_REFLECT
     tank_drive.on(50, 50)
     while victim_count < 2:
         if is_on_border_line(True): #Drive back -> next line
