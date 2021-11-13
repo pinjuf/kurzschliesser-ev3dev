@@ -51,7 +51,7 @@ def search_release_area():
     return
 
 def is_on_border_line():
-    return olor_right.color == ColorSensor.COLOR_GRAY or left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.GREEN or color_left.color == ColorSensor.GREEN
+    return color_right.color == ColorSensor.COLOR_GRAY or color_left.color == ColorSensor.COLOR_GRAY or color_right.color == ColorSensor.GREEN or color_left.color == ColorSensor.GREEN
 
 def next_line():
     tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)  #drive back
