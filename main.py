@@ -77,7 +77,7 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
 
 def snoop(): # try finding a maximum amount of markers
     sound.beep() # emotional support beep
-    tank_drive.on_for_rotations(50, 50, 7.5 * TIRE_CONST)
+    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)
     output = read_green_markers()
     tank_drive.on(-25, 25) # turn right
     start = time.time()
@@ -95,7 +95,7 @@ def snoop(): # try finding a maximum amount of markers
         tank_drive.on_for_seconds(25, -25, total1-total2)
     if output:
         sound.beep("-f 880")
-    tank_drive.on_for_rotations(-50, -50, 7.5 * TIRE_CONST)
+    tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)
     return output
     
 def handle_snooped(snooped):
@@ -116,10 +116,10 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
     global check_for_black
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
         tank_drive.stop()
-        tank_drive.on_for_seconds(-25, -25, 47.5 * TIRE_CONST) # check if we missed green markers
+        tank_drive.on_for_seconds(-25, -25, 45 * TIRE_CONST) # check if we missed green markers
         markers = snoop()
         if not markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
-            tank_drive.on_for_seconds(25, 25, 117.5 * TIRE_CONST) # nothing missed, move back forward + 70 mm
+            tank_drive.on_for_seconds(25, 25, 115* TIRE_CONST) # nothing missed, move back forward + 70 mm
             start, found = time.time(), False
             tank_drive.on(50, -50) # rotate to check if there is black
             while time.time() <= start + 0.4 * TIME_CONST:
