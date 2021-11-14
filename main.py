@@ -92,6 +92,8 @@ def snoop(): # try finding a maximum amount of markers
         tank_drive.on_for_seconds(-25, 25, total2-total1)
     if total2-total1 < 0:
         tank_drive.on_for_seconds(25, -25, total1-total2)
+    if output:
+        sound.beep("-f 880")
     return output
     
 def handle_snooped(snooped):
@@ -114,8 +116,9 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
         tank_drive.stop()
         tank_drive.on_for_seconds(-25, -25, 40 * TIRE_CONST) # check if we missed green markers
-        if not snoop():
-            tank_drive.on_for_seconds(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
+        markers = snoop()
+        if not markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
+            tank_drive.on_for_seconds(25, 25, 110 * TIRE_CONST) # nothing missed, move back forward + 70 mm
             start, found = time.time(), False
             tank_drive.on(50, -50) # rotate to check if there is black
             while time.time() <= start + 0.4 * TIME_CONST:
@@ -124,14 +127,12 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
                     break
             if not found: # nothing found, move back
                 tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
-                tank_drive.on_for_seconds(-25, -25, 50 * TIRE_CONST)
+                tank_drive.on_for_seconds(-25, -25, 70 * TIRE_CONST)
                 check_for_black = False
                 return False
-            tank_drive.off()
-            markers = snoop()
-            if markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
-                handle_snooped(markers)
             return True
+        handle_snooped(markers)
+        return True
     if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]:
         tank_drive.stop()
         markers = snoop()
