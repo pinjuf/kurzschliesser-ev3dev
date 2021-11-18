@@ -23,7 +23,7 @@ def check_for_ball():
 def grab_ball():
     #turn 180 degrees
     tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)   #drive back
-    tank_drive.on_for_seconds(48, -50, 180/(DPS * 50))
+    tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
     tank_drive.on_for_rotations(50, 50, 35 * TIRE_CONST)   #drive back to ball
 
     set_claw("open")       #open claws
