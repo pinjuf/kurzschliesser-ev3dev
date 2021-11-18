@@ -22,8 +22,10 @@ def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
 
 def grab_ball():
-    #turn 178 degrees
+    #turn 180 degrees
+    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)   #drive back
     tank_drive.on_for_seconds(48, -50, 180/(DPS * 50))
+    tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)   #drive back to ball
 
     set_claw("open")       #open claws
     set_claw_lift("down")
@@ -79,6 +81,8 @@ def next_line():
     tank_drive.on_for_seconds(50, -50, (90 if direction==0 else -90)/(DPS * 50))       #turn 90 degres
     tank_drive.on(50, 50)                                                               #start main movement
     direction = 1-direction
+
+
 
 def search():
     color_ball.mode = ColorSensor.MODE_COL_REFLECT
