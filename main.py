@@ -177,6 +177,8 @@ def main():
             while time.time()-start <= 0.3 * TIME_CONST: # time padding
                 if handle_intersection():
                     break
+                if color_right.color == ColorSensor.COLOR_BLACK:
+                    break
                 tank_drive.on(50, -25)
         elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
             tank_drive.stop()
@@ -190,6 +192,8 @@ def main():
             start = time.time()
             while time.time()-start <= 0.3 * TIME_CONST:
                 if handle_intersection():
+                    break
+                if color_left.color == ColorSensor.COLOR_BLACK:
                     break
                 tank_drive.on(-25, 50)
 
