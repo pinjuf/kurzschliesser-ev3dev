@@ -21,6 +21,15 @@ victim_count = 0       #there are two alive victims to get
 def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
 
+def grab_ball():
+    #turn 178 degrees
+    tank_drive.on_for_seconds(48, -50, 180/(DPS * 50))
+
+    set_claw("open")       #open claws
+    set_claw_lift("down")
+    set_claw("closed")      #close claws
+    set_claw_lift("up")
+    return
 
 def release_ball():
     #turn 180 degrees
