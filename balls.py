@@ -80,8 +80,6 @@ def next_line():
     tank_drive.on(50, 50)                                                               #start main movement
     direction = 1-direction
 
-
-
 def search():
     color_ball.mode = ColorSensor.MODE_COL_REFLECT
     tank_drive.on(50, 50)
