@@ -10,6 +10,7 @@ from ev3dev2.sound import *
 from ev3dev2.button import *
 from ev3dev2.display import *
 from main import *
+from grab_ball import *
 
 REFLECTION_LIMIT = 50       #Limit of dead and alive balls
 ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light sensor
@@ -20,15 +21,6 @@ victim_count = 0       #there are two alive victims to get
 def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
 
-def grab_ball():
-    #turn 180 degrees
-    tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
-
-    set_claw("open")       #open claws
-    set_claw_lift("down")
-    set_claw("closed")      #close claws
-    set_claw_lift("up")
-    return
 
 def release_ball():
     #turn 180 degrees
