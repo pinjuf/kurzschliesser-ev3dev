@@ -11,20 +11,9 @@ from ev3dev2.led import *
 from ev3dev2.sound import *
 from ev3dev2.button import *
 from ev3dev2.display import *
+
+from config import *
 print("done.")
-
-DPS = 2.0 # degrees per second on 1% power
-TIRE_RAD = 17.5 # mm
-TIME_CONST = 1 # TODO TEMPORARY! USED FOR TIMED ROTATION! TO BE REPLACED WITH POSITIONAL INPUT INSTEAD OF TIME
-
-TIRE_CONST = 1 / (2 * 3.14159 * TIRE_RAD)
-
-CLAW_RANGE   = 2500
-CLAW_LIFT_RANGE = 95
-
-MARKER_FOUND_L = 0b10
-MARKER_FOUND_R = 0b01
-MARKER_FOUND_B = 0b11
 
 try:
 	claw_lift = LargeMotor(OUTPUT_D)
