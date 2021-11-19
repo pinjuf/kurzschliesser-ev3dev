@@ -13,4 +13,6 @@ from ev3dev2.display import *
 from main import *
 from balls import *
 
+force_claw_closed()
+force_claw_lift_down()
 grab_ball()
