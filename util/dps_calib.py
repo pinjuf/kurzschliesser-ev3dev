@@ -14,19 +14,19 @@ from ev3dev2.display import *
 print("done.")
 
 try:
-	claw_lift = LargeMotor(OUTPUT_D)
-	claw      = MediumMotor(OUTPUT_A)
-	tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
+    claw_lift = LargeMotor(OUTPUT_D)
+    claw      = MediumMotor(OUTPUT_A)
+    tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
 
-	ultrasound = UltrasonicSensor(INPUT_4)
-	ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
+    ultrasound = UltrasonicSensor(INPUT_4)
+    ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
 
-	color_left = ColorSensor(INPUT_3)
-	color_right = ColorSensor(INPUT_2)
-	color_ball = ColorSensor(INPUT_1)
-	color_left.mode = ColorSensor.MODE_COL_COLOR
-	color_right.mode = ColorSensor.MODE_COL_COLOR
-	color_ball.mode = ColorSensor.MODE_COL_REFLECT
+    color_left = ColorSensor(INPUT_3)
+    color_right = ColorSensor(INPUT_2)
+    color_ball = ColorSensor(INPUT_1)
+    color_left.mode = ColorSensor.MODE_COL_COLOR
+    color_right.mode = ColorSensor.MODE_COL_COLOR
+    color_ball.mode = ColorSensor.MODE_COL_REFLECT
 except ev3dev2.DeviceNotFound:
     Sound().beep("-f 220")
     exit(2)
