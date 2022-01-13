@@ -27,7 +27,7 @@ def grab_ball():
     #turn 180 degrees
     tank_drive.on_for_rotations(-50, -50, 50 * TIRE_CONST)   #drive back
     tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
-    tank_drive.on_for_rotations(-50, -50, 35 * TIRE_CONST)   #drive back to ball
+    tank_drive.on_for_rotations(-50, -50, 25 * TIRE_CONST)   #drive back to ball
 
     set_claw_lift("down")
     set_claw("closed")      #close claws
