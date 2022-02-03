@@ -103,4 +103,4 @@ def search():
                 handle_dead_victim()
 
 if __name__ == "__main":
-    search();
+    search()
