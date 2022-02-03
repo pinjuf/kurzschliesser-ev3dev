@@ -15,21 +15,21 @@ from ev3dev2.display import *
 from config import *
 print("done.")
 
-try:
-	claw_lift = LargeMotor(OUTPUT_D)
-	claw      = MediumMotor(OUTPUT_A)
-	tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
+try: # device configuration check
+    claw_lift = LargeMotor(OUTPUT_D)
+    claw      = MediumMotor(OUTPUT_A)
+    tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
 
-	ultrasound = UltrasonicSensor(INPUT_4)
-	ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
+    ultrasound = UltrasonicSensor(INPUT_4)
+    ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
 
-	color_left = ColorSensor(INPUT_3)
-	color_right = ColorSensor(INPUT_2)
-	color_ball = ColorSensor(INPUT_1)
-	color_left.mode = ColorSensor.MODE_COL_COLOR
-	color_right.mode = ColorSensor.MODE_COL_COLOR
-	color_ball.mode = ColorSensor.MODE_COL_REFLECT
-except ev3dev2.DeviceNotFound:
+    color_left = ColorSensor(INPUT_3)
+    color_right = ColorSensor(INPUT_2)
+    color_ball = ColorSensor(INPUT_1)
+    color_left.mode = ColorSensor.MODE_COL_COLOR
+    color_right.mode = ColorSensor.MODE_COL_COLOR
+    color_ball.mode = ColorSensor.MODE_COL_REFLECT
+except ev3dev2.DeviceNotFound: # module not connected, alert and exit
     Sound().beep("-f 220")
     exit(2)
 
@@ -39,16 +39,27 @@ sound = Sound()
 leds = Led()
 
 def force_claw_lift_down():
+    """
+    Forces the claw lift down, periodically checking if it is stalled.
+    When this happens, it breaks.
+    """
     claw_lift.on(-25)
     while not claw_lift.is_stalled:
         sleep(0.01)
     claw_lift.reset()
 def set_claw_lift(position):
+    """
+    Sets the clas lift position. Pass 'up' or 'down'.
+    """
     claw_lift.on_to_position(
             40 if position.lower()=="down" else 75,
             0 if position.lower()=="down" else CLAW_LIFT_RANGE)
 
 def force_claw_closed():
+    """
+    Forces the claw closed, periodically checking if it is stalled.
+    When this happens, it breaks.
+    """
     claw.on(-100)
     while not claw.is_stalled:
         sleep(0.01)
@@ -56,15 +67,26 @@ def force_claw_closed():
     claw.on_for_seconds(100, 0.5) # release pressure
     claw.reset()
 def set_claw(position):
+    """
+    Sets the claw's state. Pass 'open' or 'closed'.
+    """
     claw.on_to_position(
             100,
             0 if position.lower()=="closed" else CLAW_RANGE)
 
 def read_green_markers(): # read markers and return as 2-bit number bcuz i like complicated shit that i will hate myself for after
+    """
+    Wrapper that reads the current state of the markers.
+    Outputs a 2-bit number, high bit represents the left.
+    """
     return ((color_left.color == ColorSensor.COLOR_GREEN) << 1) \
           | (color_right.color == ColorSensor.COLOR_GREEN)
 
 def snoop(): # try finding a maximum amount of markers
+    """
+    Move the robo around in an attempt to find a maximum of markers.
+    Outputs in the same format as 'read_green_markers()'.
+    """
     sound.beep() # emotional support beep
     tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)
     output = read_green_markers()
@@ -73,35 +95,42 @@ def snoop(): # try finding a maximum amount of markers
     while color_left.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.4 * TIME_CONST:
         output |= read_green_markers()
     total1 = time.time() - start
-    tank_drive.on(25, -25)
+    tank_drive.on(25, -25) # turn left
     start = time.time()
-    while color_right.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.8 * TIME_CONST:
+    while color_right.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.8 * TIME_CONST: # check but with double the time
         output |= read_green_markers()
     total2 = time.time() - start
-    if total2-total1 >= 0:
+    if total2-total1 >= 0: # reset to original rotation using the 2 rotation values
         tank_drive.on_for_seconds(-25, 25, total2-total1)
     if total2-total1 < 0:
         tank_drive.on_for_seconds(25, -25, total1-total2)
-    if output:
+    if output: # found a marker!
         sound.beep("-f 880")
-    tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)
+    tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST) # reset to original position
     return output
-    
+
 def handle_snooped(snooped):
+    """
+    Moves and rotates the robo acording to the passed values (should be from 'snooped()').
+    """
     if snooped == MARKER_FOUND_B:
-       tank_drive.on_for_seconds(25, 25, 80 * TIRE_CONST)
-       tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
-       tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
+        tank_drive.on_for_seconds(25, 25, 80 * TIRE_CONST)
+        tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
+        tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
     elif snooped == MARKER_FOUND_L:
-       tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-       tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))
-       tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
+        tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
+        tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))
+        tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
     elif snooped == MARKER_FOUND_R:
-       tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-       tank_drive.on_for_seconds(-50, 50, 90/(DPS * 50))
-       tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
+        tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
+        tank_drive.on_for_seconds(-50, 50, 90/(DPS * 50))
+        tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
 
 def handle_intersection(): # move back to be closer to the intersection b4 starting again
+    """
+    Handles intersection and intersection-like markings.
+    Returns True if an intersection is found.
+    """
     global check_for_black
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
         tank_drive.stop()
@@ -132,6 +161,9 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
 
 
 def main():
+    """
+    Main function of the robo.
+    """
     global check_for_black
     print("Initializing claw... ", end="")
     force_claw_lift_down()
