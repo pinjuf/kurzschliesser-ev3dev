@@ -85,7 +85,7 @@ def next_line():
 
 
 def search():
-    victim_count = 2       #there are two alive victims to get
+    victim_count = 0       #there are two alive victims to get
     color_ball.mode = ColorSensor.MODE_COL_REFLECT
     tank_drive.on(50, 50)
     while victim_count < 2:
@@ -102,5 +102,5 @@ def search():
             else:
                 handle_dead_victim()
 
-if __name__ == "__main":
-    search()
+if __name__ == "__main__":
+    search();
