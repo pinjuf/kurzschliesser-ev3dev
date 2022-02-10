@@ -102,5 +102,5 @@ def search():
             else:
                 handle_dead_victim()
 
-if __name__ == "__main":
-    search()
+if __name__ == "__main__":
+    search();
