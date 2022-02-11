@@ -15,6 +15,7 @@ REFLECTION_LIMIT = 50       #Limit of dead and alive balls
 ULATRASOUND_DISTANCE = 2    #Distance to wall/ball in cm to see ball using light sensor
 
 direction = 1               #used to turn in right direction after line finished
+victim_count = 0       #there are two alive victims to get
 
 def check_for_ball():
     return color_ball.reflected_light_intensity > REFLECTION_LIMIT
@@ -45,6 +46,7 @@ def release_ball():
     return
 
 def search_release_area():
+    global direction, victim_count
     color_ball.mode = ColorSensor.MODE_COL_COLOR            #change to color mode
     tank_drive.on(50, 50)
     while True:
@@ -75,6 +77,7 @@ def is_on_border_line(check_black):
     return ((color_right.color == ColorSensor.COLOR_BLACK or color_left.color == ColorSensor.COLOR_BLACK) if check_black else False)
 
 def next_line():
+    global direction, victim_count
     tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST)                              #drive back
     tank_drive.on_for_seconds(50, -50, (90 if direction==0 else -90) /(DPS * 50))      #turn 90 degres
     tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST)                                #drive forward to next line
@@ -85,7 +88,7 @@ def next_line():
 
 
 def search():
-    victim_count = 0       #there are two alive victims to get
+    global direction, victim_count
     color_ball.mode = ColorSensor.MODE_COL_REFLECT
     tank_drive.on(50, 50)
     while victim_count < 2:
@@ -103,4 +106,4 @@ def search():
                 handle_dead_victim()
 
 if __name__ == "__main__":
-    search();
+    search()
