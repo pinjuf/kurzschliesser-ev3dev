@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+#####                                                       #####
+# THIS CODE IS BROKEN, BECAUSE IT WAS MADE BY A JAVA PROGRAMMER #
+#####                                                       #####
+
 from time import time, sleep
 
 from ev3dev2.motor import *
