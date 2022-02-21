@@ -4,6 +4,7 @@
 # THIS CODE IS BROKEN, BECAUSE IT WAS MADE BY A JAVA PROGRAMMER #
 #####                                                       #####
 
+"""
 from time import time, sleep
 
 from ev3dev2.motor import *
@@ -111,3 +112,4 @@ def search():
 
 if __name__ == "__main__":
     search()
+"""
