@@ -4,7 +4,7 @@
 
 ### Requirements
 
- - Some version of Linux for the EV3 (preferably [ev3dev's Debian](https://www.ev3dev.org/downloads/))
+ - some version of Linux for the EV3 (preferably [ev3dev's Debian](https://www.ev3dev.org/downloads/))
  - git
  - a robot similar to `robo_V1.io` (BrickLink Studio file)
 
