@@ -1,5 +1,10 @@
-- [ ] Completely redo balls.py
-- [ ] Use rotational position instead of timing
+# TODO-List
+
++ means begun,
+X done.
+
+- [+] Completely redo balls.py
+- [+] Use rotational position instead of timing
 - [ ] Drive around obstacles
-- [ ] Detect ball room
+- [+] Detect ball room
 - [ ] Win a competition in the name of our and your lord and saviour, L I N U X
