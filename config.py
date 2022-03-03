@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 DPS = 1.9 # degrees per second on 1% power
-ROTPOS_360 = 1900 # rotations for 360 turn
+R_ROTPOS_360 = 1800 # rotations for 360 turn
+ROTPOS_360 = R_ROTPOS_360/360
 TIRE_RAD = 17.5 # mm
 TIME_CONST = 1 # TODO TEMPORARY! USED FOR TIMED ROTATION! TO BE REPLACED WITH POSITIONAL INPUT INSTEAD OF TIME
 

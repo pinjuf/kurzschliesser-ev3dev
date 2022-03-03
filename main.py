@@ -29,6 +29,7 @@ try: # device configuration check
     color_left.mode = ColorSensor.MODE_COL_COLOR
     color_right.mode = ColorSensor.MODE_COL_COLOR
     color_ball.mode = ColorSensor.MODE_COL_REFLECT
+    ROTPOS_360 /= tank_drive.left_motor.count_per_rot # hacky and i know it
 except ev3dev2.DeviceNotFound: # module not connected, alert and exit
     Sound().beep("-f 220")
     exit(2)
@@ -127,16 +128,16 @@ def handle_snooped(snooped):
     Moves and rotates the robo acording to the passed values (should be from 'snooped()').
     """
     if snooped == MARKER_FOUND_B:
-        tank_drive.on_for_seconds(25, 25, 80 * TIRE_CONST) # move forward as to be exactly on top of the intersection
-        tank_drive.on_for_seconds(50, -50, 180/(DPS * 50)) # rotate
+        tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST) # move forward as to be exactly on top of the intersection
+        tank_drive.on_for_rotations(50, -50, 180 * ROTPOS_360) # rotate
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
     elif snooped == MARKER_FOUND_L:
-        tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-        tank_drive.on_for_seconds(50, -50, 90/(DPS * 50))
+        tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST)
+        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
     elif snooped == MARKER_FOUND_R:
-        tank_drive.on_for_seconds(25, 25, 120 * TIRE_CONST)
-        tank_drive.on_for_seconds(-50, 50, 90/(DPS * 50))
+        tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST)
+        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
 
 
@@ -148,10 +149,10 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
     global check_for_black # OOOOOOO scary global var
 
     if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
-        tank_drive.on_for_seconds(-25, -25, 45 * TIRE_CONST) # check if we missed green markers
+        tank_drive.on_for_rotations(-25, -25, 30 * TIRE_CONST) # check if we missed green markers
         markers = snoop()
         if not markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
-            tank_drive.on_for_seconds(25, 25, 115 * TIRE_CONST) # nothing missed, move back forward + 70 mm
+            tank_drive.on_for_rotations(25, 25, 110 * TIRE_CONST) # nothing missed, move back forward + 70 mm
             start, found = time.time(), False
             tank_drive.on(50, -50) # rotate to check if there is black
             while time.time() <= start + 0.4 * TIME_CONST:
@@ -160,7 +161,7 @@ def handle_intersection(): # move back to be closer to the intersection b4 start
                     break
             if not found: # nothing found, move back
                 tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
-                tank_drive.on_for_seconds(-25, -25, 70 * TIRE_CONST)
+                tank_drive.on_for_rotations(-25, -25, 70 * TIRE_CONST)
                 check_for_black = False
                 return False
             return True
@@ -195,9 +196,9 @@ def main():
 
         if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
             tank_drive.stop()
-        elif ultrasound.distance_centimeters < 9: # we VERY close to a (suspected) wall
+        elif ultrasound.distance_centimeters < 14: # we VERY close to a (suspected) wall
             # TODO: drive around obstacle, at the moment we are just turning around
-            tank_drive.on_for_seconds(50, -50, 180/(DPS * 50))
+            tank_drive.on_for_rotations(50, -50, 180 * ROTPOS_360)
 
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
             continue
