@@ -141,7 +141,7 @@ def handle_snooped(snooped):
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
 
 
-def handle_intersection(): # move back to be closer to the intersection b4 starting again
+def handle_intersection():
     """
     Handles intersection and intersection-like markings.
     Returns True if an intersection is found.
