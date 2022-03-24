@@ -174,6 +174,52 @@ def handle_intersection():
         return True
     return False
 
+def handle_obstacle():
+    tank_drive.stop()
+    count = 0
+    found_hole = False
+    for _ in range(32): # max number of steps
+        if ultrasound.distance_centimeters >= 20:
+            found_hole = True
+            break
+
+        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+
+        if ultrasound.distance_centimeters <= 18:
+            tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+            break
+
+        tank_drive.on_for_rotations(25, 25, 200 * TIRE_CONST)
+        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        count += 1
+
+    if not found_hole:
+        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        tank_drive.on_for_rotations(25, 25, 200 * count * TIRE_CONST)
+        count = 0
+        for _ in range(32): # max number of steps
+            if ultrasound.distance_centimeters >= 20:
+                found_hole = True
+                break
+
+            tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+            tank_drive.on_for_rotations(25, 25, 200 * TIRE_CONST)
+            tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+            count -= 1
+
+    tank_drive.on_for_rotations(25, 25, 550 * TIRE_CONST)
+
+    if count > 0:
+        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+    if count < 0:
+        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+
+    tank_drive.on_for_rotations(25, 25, 200 * abs(count) * TIRE_CONST)
+
+    if count > 0:
+        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+    if count < 0:
+        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
 
 def main():
     """
@@ -197,8 +243,7 @@ def main():
         if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
             tank_drive.stop()
         elif ultrasound.distance_centimeters < 14: # we VERY close to a (suspected) wall
-            # TODO: drive around obstacle, at the moment we are just turning around
-            tank_drive.on_for_rotations(50, -50, 180 * ROTPOS_360)
+            handle_obstacle()
 
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
             continue
