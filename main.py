@@ -89,6 +89,20 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
     return ((color_left.color == ColorSensor.COLOR_GREEN) << 1) \
           | (color_right.color == ColorSensor.COLOR_GREEN)
 
+def eval_color(color):
+    r, g, b = color
+    min_diff = 256*3
+    out = 0
+    for c in COLORS:
+        t, h, n = c
+        diff = abs(r-t) \
+             + abs(g-h) \
+             + abs(b-n)
+        if diff < min_diff:
+            min_diff = diff
+            out = c
+    return out
+
 def snoop(): # try finding a maximum amount of markers
     """
     Move the robo around in an attempt to find a maximum of markers.

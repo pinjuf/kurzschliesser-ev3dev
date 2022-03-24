@@ -14,3 +14,5 @@ CLAW_LIFT_RANGE = 95
 MARKER_FOUND_L = 0b10
 MARKER_FOUND_R = 0b01
 MARKER_FOUND_B = 0b11
+
+COLORS = {} # TODO: add keys with pattern {'color':(r, g, b)}
