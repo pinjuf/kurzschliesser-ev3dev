@@ -1,6 +1,6 @@
 # TODO-List
 
-+ means begun,
+\+ means begun,
 
 - [ ] (+) Completely redo balls.py
 - [ ] (+) Use rotational position instead of timing
