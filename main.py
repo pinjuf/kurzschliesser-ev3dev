@@ -194,6 +194,9 @@ def handle_obstacle():
     found_hole = False
     for _ in range(32): # max number of steps
         if ultrasound.distance_centimeters >= 20:
+            tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+            tank_drive.on_for_rotations(25, 25, 60 * TIRE_CONST)
+            tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
             found_hole = True
             break
 
@@ -213,6 +216,9 @@ def handle_obstacle():
         count = 0
         for _ in range(32): # max number of steps
             if ultrasound.distance_centimeters >= 20:
+                tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+                tank_drive.on_for_rotations(25, 25, 60 * TIRE_CONST)
+                tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
                 found_hole = True
                 break
 
