@@ -3,7 +3,7 @@
 from main import *
 
 def get_room_size_from_corner():
-    MINDIST = 20
+    MINDIST = 40
     values = []
 
     for _ in range(4):
@@ -11,7 +11,7 @@ def get_room_size_from_corner():
         tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
 
     for i in range(4):
-        if values[i] < MINDIST:
+        if values[i] > MINDIST:
             xs = values[i]
             ys = values[(i+1)%len(values)]
             break

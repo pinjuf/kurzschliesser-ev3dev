@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 DPS = 1.9 # degrees per second on 1% power
-R_ROTPOS_360 = 1800 # rotations for 360 turn
+R_ROTPOS_360 = 1900 # rotations for 360 turn
 ROTPOS_360 = R_ROTPOS_360/360
 TIRE_RAD = 17.5 # mm
 TIME_CONST = 1 # TODO TEMPORARY! USED FOR TIMED ROTATION! TO BE REPLACED WITH POSITIONAL INPUT INSTEAD OF TIME
@@ -15,4 +15,8 @@ MARKER_FOUND_L = 0b10
 MARKER_FOUND_R = 0b01
 MARKER_FOUND_B = 0b11
 
-COLORS = {} # TODO: add keys with pattern {'color':(r, g, b)}
+COLORS = {
+        'white':(255,255,255),
+        'black':(0, 0, 0),
+        'green':(0, 255, 0),
+}
