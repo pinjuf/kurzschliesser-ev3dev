@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 print("Loading libs... ", end="")
+
 from time import time, sleep
+from math import *
 
 import ev3dev2
 from ev3dev2.motor import *
