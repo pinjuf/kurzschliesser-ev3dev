@@ -89,6 +89,9 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
           | (color_right.color == ColorSensor.COLOR_GREEN)
 
 def eval_color(color):
+    """
+    Evaluate a RGB color tuple.
+    """
     r, g, b = color
     min_diff = 256*3
     out = 0
@@ -188,6 +191,9 @@ def handle_intersection():
     return False
 
 def handle_obstacle():
+    """
+    The robot is facing an obstacle head on and has to drive around it.
+    """
     tank_drive.stop()
     count = 0
     found_hole = False
