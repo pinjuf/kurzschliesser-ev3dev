@@ -18,7 +18,26 @@ def get_room_size_from_corner():
         tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
 
     return xs, ys
+
+def search_trig(xs, ys):
+    critical_angle = atan(ys/xs)
+    offset = tank_drive.left_motor.position
+    tank_drive.on(25, -25)
     
+    angle = 0
+    while angle < 90:
+        angle = 360*(tank_drive.left_motor.position-offset)/R_ROTPOS360
+        if angle < critical_angle:
+            expected = xs/cos(radians(angle))
+        else:
+            expected = ys/cos(radians(90-angle))
+            
+        actual = ultrasound.distance_centimeters
+        if actual < (expected - 10):
+            tank_drive.off()
+            break
+        
 
 if __name__ == '__main__':
     xs, ys = get_room_size_from_corner()
+    search_trig(xs, ys)
