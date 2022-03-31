@@ -25,10 +25,9 @@ try: # device configuration check
 
     color_left = ColorSensor(INPUT_3)
     color_right = ColorSensor(INPUT_2)
-    color_ball = ColorSensor(INPUT_1)
     color_left.mode = ColorSensor.MODE_COL_COLOR
     color_right.mode = ColorSensor.MODE_COL_COLOR
-    color_ball.mode = ColorSensor.MODE_COL_REFLECT
+
     ROTPOS_360 /= tank_drive.left_motor.count_per_rot # hacky and i know it
 except ev3dev2.DeviceNotFound: # module not connected, alert and exit
     Sound().beep("-f 220")
