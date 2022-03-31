@@ -93,6 +93,11 @@ def eval_color(color):
     Evaluate a RGB color tuple.
     """
     r, g, b = color
+    maxc    = max(color) # Extrapolate to 255
+    r *= 255/maxc
+    g *= 255/maxc
+    b *= 255/maxc
+
     min_diff = 256*3
     out = 0
     for c in COLORS:
