@@ -29,6 +29,8 @@ try: # device configuration check
     color_right = ColorSensor(INPUT_2)
     color_left.mode = ColorSensor.MODE_COL_COLOR
     color_right.mode = ColorSensor.MODE_COL_COLOR
+    
+    gyro = GyroSensor(INPUT_1)
 
     ROTPOS_360 /= tank_drive.left_motor.count_per_rot # hacky and i know it
 except ev3dev2.DeviceNotFound: # module not connected, alert and exit
@@ -264,7 +266,11 @@ def main():
     set_claw_lift("up")
     force_claw_closed()
     set_claw("open")
-    print("done.\nWaiting for start signal... ", end="")
+    print("done.\nWaiting for calibration signal... ", end="")
+    buttons.wait_for_bump("enter")
+    gyro.calibrate()
+    gyro.reset()
+    print("done.\nWaiting for start signal...", end="")
     buttons.wait_for_bump("enter")
     print("received.")
 
