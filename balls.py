@@ -26,7 +26,7 @@ def search_trig(xs, ys):
     
     angle = 0
     while angle < 90:
-        angle = 360*(tank_drive.left_motor.position-offset)/R_ROTPOS360
+        angle = 360*(tank_drive.left_motor.position-offset)/R_ROTPOS_360
         if angle < critical_angle:
             expected = xs/cos(radians(angle))
         else:

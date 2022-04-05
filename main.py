@@ -32,8 +32,6 @@ try: # device configuration check
     
     gyro = GyroSensor(INPUT_1)
     tank_drive.gyro = gyro
-
-    ROTPOS_360 /= tank_drive.left_motor.count_per_rot # hacky and i know it
 except ev3dev2.DeviceNotFound: # module not connected, alert and exit
     Sound().beep("-f 220")
     exit(2)
@@ -155,15 +153,15 @@ def handle_snooped(snooped):
     """
     if snooped == MARKER_FOUND_B:
         tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST) # move forward as to be exactly on top of the intersection
-        tank_drive.on_for_rotations(50, -50, 180 * ROTPOS_360) # rotate
+        tank_drive.turn_degrees(50, 180)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
     elif snooped == MARKER_FOUND_L:
         tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST)
-        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, -90)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
     elif snooped == MARKER_FOUND_R:
         tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST)
-        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, 90)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
 
 
@@ -209,52 +207,52 @@ def handle_obstacle():
     found_hole = False
     for _ in range(32): # max number of steps
         if ultrasound.distance_centimeters >= 20:
-            tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+            tank_drive.turn_degrees(-50, 90)
             tank_drive.on_for_rotations(25, 25, 60 * TIRE_CONST)
-            tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+            tank_drive.turn_degrees(-50, -90)
             found_hole = True
             break
 
-        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, 90)
 
-        if ultrasound.distance_centimeters <= 18:
-            tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        if ultrasound.distance_centimeters <= 20:
+            tank_drive.turn_degrees(-50, -90)
             break
 
         tank_drive.on_for_rotations(25, 25, 200 * TIRE_CONST)
-        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, -90)
         count += 1
 
     if not found_hole:
-        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, -90)
         tank_drive.on_for_rotations(25, 25, 200 * count * TIRE_CONST)
         count = 0
         for _ in range(32): # max number of steps
             if ultrasound.distance_centimeters >= 20:
-                tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+                tank_drive.turn_degrees(-50, -90)
                 tank_drive.on_for_rotations(25, 25, 60 * TIRE_CONST)
-                tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+                tank_drive.turn_degrees(-50, 90)
                 found_hole = True
                 break
 
-            tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+            tank_drive.turn_degrees(-50, -90)
             tank_drive.on_for_rotations(25, 25, 200 * TIRE_CONST)
-            tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+            tank_drive.turn_degrees(-50, 90)
             count -= 1
 
     tank_drive.on_for_rotations(25, 25, 550 * TIRE_CONST)
 
     if count > 0:
-        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, -90)
     if count < 0:
-        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, 90)
 
     tank_drive.on_for_rotations(25, 25, 200 * abs(count) * TIRE_CONST)
 
     if count > 0:
-        tank_drive.on_for_rotations(-50, 50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, 90)
     if count < 0:
-        tank_drive.on_for_rotations(50, -50, 90 * ROTPOS_360)
+        tank_drive.turn_degrees(-50, -90)
 
 def main():
     """
@@ -267,10 +265,12 @@ def main():
     set_claw_lift("up")
     force_claw_closed()
     set_claw("open")
+
     print("done.\nWaiting for calibration signal... ", end="")
     buttons.wait_for_bump("enter")
     gyro.calibrate()
-    gyro.reset()
+    sound.beep()
+
     print("done.\nWaiting for start signal...", end="")
     buttons.wait_for_bump("enter")
     print("received.")
