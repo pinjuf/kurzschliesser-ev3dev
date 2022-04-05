@@ -31,6 +31,7 @@ try: # device configuration check
     color_right.mode = ColorSensor.MODE_COL_COLOR
     
     gyro = GyroSensor(INPUT_1)
+    tank_drive.gyro = gyro
 
     ROTPOS_360 /= tank_drive.left_motor.count_per_rot # hacky and i know it
 except ev3dev2.DeviceNotFound: # module not connected, alert and exit
