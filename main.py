@@ -152,15 +152,15 @@ def handle_snooped(snooped):
     Moves and rotates the robo acording to the passed values (should be from 'snooped()').
     """
     if snooped == MARKER_FOUND_B:
-        tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST) # move forward as to be exactly on top of the intersection
+        tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST) # move forward as to be exactly on top of the intersection
         tank_drive.turn_degrees(50, 180)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
     elif snooped == MARKER_FOUND_L:
-        tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST)
+        tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST)
         tank_drive.turn_degrees(-50, -90)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
     elif snooped == MARKER_FOUND_R:
-        tank_drive.on_for_rotations(25, 25, 80 * TIRE_CONST)
+        tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST)
         tank_drive.turn_degrees(-50, 90)
         tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
 
@@ -281,7 +281,8 @@ def main():
 
         if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
             tank_drive.stop()
-        elif ultrasound.distance_centimeters < 14: # we VERY close to a (suspected) wall
+        elif ultrasound.distance_centimeters < 7: # we VERY close to a (suspected) wall
+            tank_drive.on_for_rotations(-25, -25, 70 * TIRE_CONST)
             handle_obstacle()
 
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
