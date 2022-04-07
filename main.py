@@ -17,7 +17,7 @@ from ev3dev2.display import *
 from config import *
 print("done.")
 
-try: # device configuration check
+try: # device configuration check :) 8=)
     claw_lift = LargeMotor(OUTPUT_D)
     claw      = MediumMotor(OUTPUT_A)
     tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
