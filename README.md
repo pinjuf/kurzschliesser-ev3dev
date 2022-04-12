@@ -8,7 +8,7 @@
  - git
  - a robot similar to `robo_V1.io` (BrickLink Studio file)
 
-# Setting up and running
+### Setting up and running
 
  1) Follow the instructions on [ev3dev.org](https://www.ev3dev.org/docs/tutorials/connecting-to-the-internet-via-usb/)
  2) Mount the brick's filesystem: `mkdir $mountpoint; sshfs robot@ev3dev.local: $mountpoint`
@@ -21,3 +21,8 @@
  4) Clone this repo if not already done: `git clone https://github.com/pinjuf/kurzschliesser-ev3dev`
  5) You can now execute the `main.py` script using either Brickman (recommended) or `ssh robot@ev3dev.local ./kurzschliesser-ev3dev/main.py`
     > The screen on ev3dev is usually reserved for Brickman's reserved TTY. If you want to run from SSH and have access to the terminal, use `sudo chvt $N` and optionally `sudo conspy` to bind your PTS to the screen. You can then revert back to the Brickman TTY.
+
+## About some files
+
+### ```robo_V1.io```
+This is a BrickLink Studio model file. It's pretty much the best Lego modelling software, but it's proprietary and only has Windows builds (i truly am sorry). So if you're an absolute chad who uses Linux (we use Arch btw), you will need to use Wine or a VM.
