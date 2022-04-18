@@ -11,10 +11,10 @@
 ### Setting up and running
 
  1) Follow the instructions on [ev3dev.org](https://www.ev3dev.org/docs/tutorials/connecting-to-the-internet-via-usb/)
- 2) Mount the brick's filesystem: `mkdir $mountpoint; sshfs robot@ev3dev.local: $mountpoint`
+ 2) Mount the brick's filesystem: `mkdir $mountpoint; sshfs -o idmap=user robot@ev3dev.local: $mountpoint`
     > You will be asked a passwd, the default on ev3dev is `maker`
     >
-    > `sshfs` requires the FUSE linux kernel module. It will not work on WSL 1 etc. , which doesn't provide an actual kernel.
+    > `sshfs` requires the FUSE linux kernel module. It will not work on WSL 1 etc., which doesn't provide an actual kernel.
     > 
     > To unmount, use `fusermount -uz $mountpoint`
  3) CD into the Brick's FS: `cd $mountpoint`
@@ -25,4 +25,4 @@
 ## About some files
 
 ### ```robo_V1.io```
-This is a BrickLink Studio model file. It's pretty much the best Lego modelling software, but it's proprietary and only has Windows builds (i truly am sorry). So if you're an absolute chad who uses Linux (we use Arch btw), you will need to use Wine or a VM.
+This is a BrickLink Studio model file. It's pretty much the best Lego modelling software, but it's proprietary and only has Windows builds (I truly am sorry). So if you're an absolute chad who uses Linux (we use Arch BTW), you will need to use Wine or a VM.
