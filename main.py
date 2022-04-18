@@ -17,30 +17,37 @@ from ev3dev2.display import *
 from config import *
 print("done.")
 
-try: # device configuration check :) 8=)
-    claw_lift = LargeMotor(OUTPUT_D)
-    claw      = MediumMotor(OUTPUT_A)
-    tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
+def init():
+    global claw_lift, claw
+    global tank_drive
+    global ultrasound
+    global color_left, color_right
+    global gyro
+    global display, buttons, sound, leds
 
-    ultrasound = UltrasonicSensor(INPUT_4)
-    ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
+    try: # device configuration check :) 8=)
+        claw_lift = LargeMotor(OUTPUT_D)
+        claw      = MediumMotor(OUTPUT_A)
+        tank_drive = MoveTank(OUTPUT_B, OUTPUT_C)
 
-    color_left = ColorSensor(INPUT_3)
-    color_right = ColorSensor(INPUT_2)
-    color_left.mode = ColorSensor.MODE_COL_COLOR
-    color_right.mode = ColorSensor.MODE_COL_COLOR
-    
-    gyro = GyroSensor(INPUT_1)
-    tank_drive.gyro = gyro
-except ev3dev2.DeviceNotFound: # module not connected, alert and exit
-    Sound().beep("-f 220")
-    exit(2)
+        ultrasound = UltrasonicSensor(INPUT_4)
+        ultrasound.mode = UltrasonicSensor.MODE_US_DIST_CM
 
+        color_left = ColorSensor(INPUT_3)
+        color_right = ColorSensor(INPUT_2)
+        color_left.mode = ColorSensor.MODE_COL_COLOR
+        color_right.mode = ColorSensor.MODE_COL_COLOR
 
-display = Display()
-buttons = Button()
-sound = Sound()
-leds = Led()
+        gyro = GyroSensor(INPUT_1)
+        tank_drive.gyro = gyro
+    except ev3dev2.DeviceNotFound: # module not connected, alert and exit
+        Sound().beep("-f 220")
+        exit(2)
+
+    display = Display()
+    buttons = Button()
+    sound = Sound()
+    leds = Led()
 
 
 def force_claw_lift_down():
@@ -254,12 +261,8 @@ def handle_obstacle():
     if count < 0:
         tank_drive.turn_degrees(-50, -90)
 
-def main():
-    """
-    Main function of the robo.
-    """
-    global check_for_black
 
+def calibrate_and_ready():
     print("Initializing claw... ", end="")
     force_claw_lift_down()
     set_claw_lift("up")
@@ -274,6 +277,13 @@ def main():
     print("done.\nWaiting for start signal...", end="")
     buttons.wait_for_bump("enter")
     print("received.")
+
+
+def main():
+    """
+    Main function of the robo.
+    """
+    global check_for_black
 
     while True:
         check_for_black = True # set up for handle_intersection()
@@ -332,4 +342,6 @@ def main():
     print("Program finished.")
 
 if __name__ == "__main__":
+    init()
+    calibrate_and_ready()
     main()
