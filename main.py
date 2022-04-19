@@ -279,7 +279,7 @@ def calibrate_and_ready():
     print("received.")
 
 
-def main():
+def lmain():
     """
     Main function of the robo.
     """
@@ -341,7 +341,42 @@ def main():
 
     print("Program finished.")
 
+def pickup_ball():
+    set_claw_lift("up")
+    set_claw("open")
+
+    tank_drive.on_for_rotations(-25, -25, 50 * TIRE_CONST)
+    tank_drive.turn_degrees(-50, 180)
+    tank_drive.on_for_rotations(-25, -25, 40 * TIRE_CONST)
+
+    set_claw_lift("down")
+    set_claw("closed")
+    set_claw_lift("up")
+
+    tank_drive.turn_degrees(-50, -180)
+    tank_drive.on_for_rotations(25, 25, 10 * TIRE_CONST)
+
+def drop_ball():
+    set_claw_lift("up")
+    set_claw("closed")
+
+    tank_drive.on_for_rotations(-25, -25, 50 * TIRE_CONST)
+    tank_drive.turn_degrees(-50, 180)
+    tank_drive.on_for_rotations(-25, -25, 40 * TIRE_CONST)
+
+    set_claw_lift("down")
+    set_claw("open")
+    set_claw_lift("up")
+
+    tank_drive.turn_degrees(-50, -180)
+    tank_drive.on_for_rotations(25, 25, 10 * TIRE_CONST)
+
+def bmain():
+    pickup_ball()
+    sleep(5)
+    drop_ball()
+
 if __name__ == "__main__":
     init()
     calibrate_and_ready()
-    main()
+    bmain()

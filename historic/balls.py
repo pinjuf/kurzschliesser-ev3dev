@@ -36,8 +36,26 @@ def search_trig(xs, ys):
         if actual < (expected - 10):
             tank_drive.off()
             break
-        
+
+def pickup_ball():
+    set_claw_lift("up")
+    set_claw("open")
+
+    tank_drive.on_for_rotations(-25, -25, 50 * TIRE_CONST)
+    tank_drive.turn_degrees(-50, 180)
+    tank_drive.on_for_rotations(-25, -25, 20 * TIRE_CONST)
+
+    set_claw_lift("down")
+    set_claw("closed")
+
+    tank_drive.turn_degrees(-50, -180)
+    tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST)
+
+def bmain():
+    pickup_ball()
 
 if __name__ == '__main__':
-    xs, ys = get_room_size_from_corner()
-    search_trig(xs, ys)
+    init()
+    print(claw_lift.position)
+    calibrate_and_ready()
+    bmain()
