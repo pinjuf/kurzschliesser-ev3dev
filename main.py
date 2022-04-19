@@ -291,6 +291,9 @@ def lmain():
 
         if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
             tank_drive.stop()
+        elif ColorSensor.COLOR_RED in [color_left.color, color_right.color]: # we fucking did it, we are at the exit
+            exit(0)
+
         elif ultrasound.distance_centimeters < 7: # we VERY close to a (suspected) wall
             tank_drive.on_for_rotations(-25, -25, 70 * TIRE_CONST)
             handle_obstacle()
