@@ -374,10 +374,31 @@ def drop_ball():
     tank_drive.turn_degrees(-50, -180)
     tank_drive.on_for_rotations(25, 25, 10 * TIRE_CONST)
 
+def find_zigzag():
+    turn_dir = "left" # know which direction to turn in
+    while not RESCUE_SIZE[0]-200 < ultrasound.distance_centimeters*10 < RESCUE_SIZE[0]+200:
+        if RESCUE_SIZE[1]-200 < ultrasound.distance_centimeters*10 < RESCUE_SIZE[1]+200:
+            turn_dir = "right"
+        tank_drive.turn_degrees(-90, 90)
+
+    for i in range((RESCUE_SIZE[1]-100)/100):
+        tank_drive.on_for_rotations(50, 50, (RESCUE_SIZE[1]-100), block=False)
+        while tank_drive.left.is_running:
+            if ultrasound.distance_centimeters < 40:
+                return
+        if turn_dir == "left":
+            tank_drive.turn_degrees(-50, -90)
+            tank_drive.on_for_rotations(25, 25, 100 * TIRE_CONST)
+            tank_drive.turn_degrees(-50, -90)
+            turn_dir = "right"
+        else:
+            tank_drive.turn_degrees(-50, 90)
+            tank_drive.on_for_rotations(25, 25, 100 * TIRE_CONST)
+            tank_drive.turn_degrees(-50, 90)
+            turn_dir = "left"
+
 def bmain():
-    pickup_ball()
-    sleep(5)
-    drop_ball()
+    find_zigzag()
 
 if __name__ == "__main__":
     init()

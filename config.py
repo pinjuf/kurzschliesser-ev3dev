@@ -18,3 +18,5 @@ COLORS = {
         'black':(0, 0, 0),
         'green':(0, 255, 0),
 }
+
+RESCUE_SIZE = (1200, 900)
