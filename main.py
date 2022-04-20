@@ -375,10 +375,11 @@ def drop_ball():
     tank_drive.on_for_rotations(25, 25, 10 * TIRE_CONST)
 
 def find_zigzag():
-    turn_dir = "left" # know which direction to turn in
+    turn_dir = "right" # know which direction to turn in
     while not RESCUE_SIZE[0]-200 < ultrasound.distance_centimeters*10 < RESCUE_SIZE[0]+200:
+        turn_dir = "right"
         if RESCUE_SIZE[1]-200 < ultrasound.distance_centimeters*10 < RESCUE_SIZE[1]+200:
-            turn_dir = "right"
+            turn_dir = "left" # the measurement BEFORE the locating of RESCUE_SIZE[0] tells us on which side a wall is next to us
         tank_drive.turn_degrees(-90, 90)
 
     for i in range((RESCUE_SIZE[1]-100)/100):
