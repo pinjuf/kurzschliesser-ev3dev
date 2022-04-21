@@ -49,6 +49,11 @@ def init():
     sound = Sound()
     leds = Led()
 
+def stop_beep_continue():
+    speed_a, speed_b = tank_drive.motor_left.speed_sp, tank_drive.motor_right.speed_sp
+    tank_drive.off()
+    sound.beep("-f 440")
+    tank_drive.on(speed_a, speed_b)
 
 def force_claw_lift_down():
     """
@@ -300,6 +305,7 @@ def lmain():
         if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
             tank_drive.stop()
         elif ColorSensor.COLOR_RED in [color_left.color, color_right.color]: # we fucking did it, we are at the rescue zone
+            stop_beep_continue()
             set_claw_lift("down")
             tank_drive.on_for_rotations(50, 50, 300 * TIRE_CONST)
             set_claw_lift("up")
