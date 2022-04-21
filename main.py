@@ -284,6 +284,8 @@ def calibrate_and_ready():
     buttons.wait_for_bump("enter")
     print("received.")
 
+def rescue_can():
+    pass
 
 def lmain():
     """
@@ -297,7 +299,11 @@ def lmain():
 
         if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
             tank_drive.stop()
-        elif ColorSensor.COLOR_RED in [color_left.color, color_right.color]: # we fucking did it, we are at the exit
+        elif ColorSensor.COLOR_RED in [color_left.color, color_right.color]: # we fucking did it, we are at the rescue zone
+            set_claw_lift("down")
+            tank_drive.on_for_rotations(50, 50, 300 * TIRE_CONST)
+            set_claw_lift("up")
+            rescue_can()
             exit(0)
 
         elif ultrasound.distance_centimeters < 7: # we VERY close to a (suspected) wall
