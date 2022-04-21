@@ -66,7 +66,10 @@ def set_claw_lift(position):
     """
     claw_lift.on_to_position(
             40 if position.lower()=="down" else 75,
-            0 if position.lower()=="down" else CLAW_LIFT_RANGE)
+            0 if position.lower()=="down" else CLAW_LIFT_RANGE, block=False)
+    while claw_lift.is_running:
+        if claw_lift.is_stalled:
+            return
 
 
 def force_claw_closed():
@@ -87,7 +90,10 @@ def set_claw(position):
     """
     claw.on_to_position(
             100,
-            0 if position.lower()=="closed" else CLAW_RANGE)
+            0 if position.lower()=="closed" else CLAW_RANGE, block=False)
+    while claw_lift.is_running:
+        if claw_lift.is_stalled:
+            return
 
 
 def read_green_markers(): # read markers and return as 2-bit number bcuz i like complicated shit that i will hate myself for after
