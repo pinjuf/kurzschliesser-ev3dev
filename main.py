@@ -50,7 +50,7 @@ def init():
     leds = Led()
 
 def stop_beep_continue():
-    speed_a, speed_b = tank_drive.motor_left.speed_sp, tank_drive.motor_right.speed_sp
+    speed_a, speed_b = tank_drive.left_motor.speed_sp, tank_drive.right_motor.speed_sp
     tank_drive.off()
     sound.beep("-f 440")
     tank_drive.on(speed_a, speed_b)
@@ -428,4 +428,4 @@ def bmain():
 if __name__ == "__main__":
     init()
     calibrate_and_ready()
-    bmain()
+    lmain()
