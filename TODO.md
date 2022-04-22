@@ -4,5 +4,6 @@
 
 - [ ] (+) Completely redo balls.py
 - [X] Drive around obstacles
-- [ ] (+) Detect ball room
+- [X] Detect ball room
+- [ ] (+) Implement T-crossings
 - [ ] Win a competition in the name of our and your lord and saviour, L I N U X
