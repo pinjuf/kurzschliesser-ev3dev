@@ -20,3 +20,5 @@ COLORS = {
 }
 
 RESCUE_SIZE = (1200, 900)
+
+RESCUE_KIT = False
