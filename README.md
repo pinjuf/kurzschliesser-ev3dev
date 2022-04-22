@@ -24,5 +24,5 @@
 
 ## About some files
 
-### ```robo_V1.io```
-This is a BrickLink Studio model file. It's pretty much the best Lego modelling software, but it's proprietary and only has Windows builds (I truly am sorry). So if you're an absolute chad who uses Linux (we use Arch BTW), you will need to use Wine or a VM.
+### `robo_V1.io`
+This is a BrickLink Studio model file of our robot, the `Kabelstapler`. It's pretty much the best Lego modelling software, but it's proprietary and only has Windows builds (I truly am sorry). So if you're an absolute chad who uses Linux (we use Arch BTW), you will need to use Wine or a VM.
