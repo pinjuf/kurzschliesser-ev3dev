@@ -198,6 +198,7 @@ def handle_intersection():
             start, found = time.time(), False
             tank_drive.on(50, -50) # rotate to check if there is black
             while time.time() <= start + 0.4 * TIME_CONST:
+                # TODO: check for left sensor (aka the outer sonser to check if we are at a t-crossing)
                 if color_right.color == ColorSensor.COLOR_BLACK:
                     found = True
                     break
