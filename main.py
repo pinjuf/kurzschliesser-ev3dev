@@ -285,6 +285,12 @@ def calibrate_and_ready():
     gyro.calibrate()
     sound.beep()
 
+    if RESCUE_KIT:
+        print("done.\nWaiting for pickup rescue kit signal... ", end="")
+        buttons.wait_for_bump("enter")
+        set_claw("closed")
+        sound.beep()
+
     print("done.\nWaiting for start signal...", end="")
     buttons.wait_for_bump("enter")
     print("received.")
