@@ -220,8 +220,7 @@ def handle_intersection():
                         ttrig = True
             tank_drive.stop()
 
-
-            if not found: # nothing found, move back
+            if not found: # nothing found, check ttrig and/or move back
                 if ttrig: # T-Crossing detector was triggered
                     if last_turn == "right":
                         tank_drive.on(50, -50)
