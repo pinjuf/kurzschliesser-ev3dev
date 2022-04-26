@@ -210,7 +210,7 @@ def handle_intersection():
 
             if last_turn == "left":
                 start, found = time.time(), False
-                tank_drive.on(-50, 50) # rotate to check if there is black
+                tank_drive.on(-50, 50)
                 while time.time() <= start + 0.4 * TIME_CONST:
                     if color_left.color == ColorSensor.COLOR_BLACK:
                         found = True
