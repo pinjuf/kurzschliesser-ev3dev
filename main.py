@@ -195,15 +195,50 @@ def handle_intersection():
         markers = snoop()
         if not markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
             tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
-            start, found = time.time(), False
-            tank_drive.on(50, -50) # rotate to check if there is black
-            while time.time() <= start + 0.4 * TIME_CONST:
-                if color_right.color == ColorSensor.COLOR_BLACK:
-                    found = True
-                    break
+            ttrig = False
+
+            if last_turn == "right":
+                start, found = time.time(), False
+                tank_drive.on(50, -50) # rotate to check if there is black
+                while time.time() <= start + 0.4 * TIME_CONST:
+                    if color_right.color == ColorSensor.COLOR_BLACK:
+                        found = True
+                        break
+
+                    if color_left.color == ColorSensor.COLOR_BLACK:
+                        ttrig = True
+
+            if last_turn == "left":
+                start, found = time.time(), False
+                tank_drive.on(-50, 50) # rotate to check if there is black
+                while time.time() <= start + 0.4 * TIME_CONST:
+                    if color_left.color == ColorSensor.COLOR_BLACK:
+                        found = True
+                        break
+
+                    if color_right.color == ColorSensor.COLOR_BLACK:
+                        ttrig = True
+            tank_drive.stop()
+
+
             if not found: # nothing found, move back
+                if ttrig: # T-Crossing detector was triggered
+                    if last_turn == "right":
+                        tank_drive.on(50, -50)
+                        while color_left.color != ColorSensor.COLOR_BLACK:
+                            pass
+                        while color_left.color == ColorSensor.COLOR_BLACK:
+                            pass
+                    if last_turn == "left":
+                        tank_drive.on(-50, 50)
+                        while color_right.color != ColorSensor.COLOR_BLACK:
+                            pass
+                        while color_right.color == ColorSensor.COLOR_BLACK:
+                            pass
+                    tank_drive.stop()
+                    return True
                 tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
-                tank_drive.on_for_rotations(-25, -25, 60 * TIRE_CONST)
+                tank_drive.on_for_rotations(-25, -25, 67.5 * TIRE_CONST)
                 check_for_black = False
                 return False
             else:
@@ -304,7 +339,7 @@ def lmain():
     """
     Main function of the robo.
     """
-    global check_for_black
+    global check_for_black, last_turn
 
     while True:
         check_for_black = True # set up for handle_intersection()
@@ -328,6 +363,7 @@ def lmain():
             continue
 
         elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
+            last_turn = "left"
             tank_drive.stop()
             while color_left.color == ColorSensor.COLOR_BLACK:
                 if handle_intersection(): # check for intersection
@@ -346,6 +382,7 @@ def lmain():
                 tank_drive.on(50, -25)
 
         elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
+            last_turn = "right"
             tank_drive.stop()
             while color_right.color == ColorSensor.COLOR_BLACK:
                 if handle_intersection():
