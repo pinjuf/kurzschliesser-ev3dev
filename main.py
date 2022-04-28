@@ -172,15 +172,15 @@ def handle_snooped(snooped):
     if snooped == MARKER_FOUND_B:
         tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST) # move forward as to be exactly on top of the intersection
         tank_drive.turn_degrees(50, 180)
-        tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST) # move back to be closer to the intersection b4 starting again
+        tank_drive.on_for_rotations(25, 25, 25 * TIRE_CONST) # move forward to awoid green markers
     elif snooped == MARKER_FOUND_L:
         tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST)
         tank_drive.turn_degrees(-50, -90)
-        tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
+        tank_drive.on_for_rotations(25, 25, 25 * TIRE_CONST)
     elif snooped == MARKER_FOUND_R:
         tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST)
         tank_drive.turn_degrees(-50, 90)
-        tank_drive.on_for_rotations(-25, -25, 5 * TIRE_CONST)
+        tank_drive.on_for_rotations(25, 25, 25 * TIRE_CONST)
 
 
 def handle_intersection():
