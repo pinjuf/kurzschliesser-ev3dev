@@ -195,7 +195,6 @@ def handle_intersection():
         markers = snoop()
         if not markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
             tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
-            ttrig = False
 
             if last_turn == "right":
                 start, found = time.time(), False
@@ -206,7 +205,10 @@ def handle_intersection():
                         break
 
                     if color_left.color == ColorSensor.COLOR_BLACK:
-                        ttrig = True
+                        while color_left.color == ColorSensor.COLOR_BLACK:
+                            pass
+                        tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST)
+                        return True
 
             if last_turn == "left":
                 start, found = time.time(), False
@@ -217,30 +219,13 @@ def handle_intersection():
                         break
 
                     if color_right.color == ColorSensor.COLOR_BLACK:
-                        ttrig = True
-            tank_drive.stop()
+                        while color_right.color == ColorSensor.COLOR_BLACK:
+                            pass
+                        tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST)
+                        return True
 
             if not found: # nothing found, check ttrig and/or move back
                 tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
-                if ttrig: # T-Crossing detector was triggered
-                    if last_turn == "right":
-                        if color_right.color != ColorSensor.COLOR_BLACK:
-                            tank_drive.on(50, -50)
-                            while color_right.color != ColorSensor.COLOR_BLACK:
-                                pass
-                        tank_drive.on(-50, 50)
-                        while color_right.color == ColorSensor.COLOR_BLACK:
-                            pass
-                    if last_turn == "left":
-                        if color_left.color != ColorSensor.COLOR_BLACK:
-                            tank_drive.on(-50, 50)
-                            while color_left.color != ColorSensor.COLOR_BLACK:
-                                pass
-                        tank_drive.on(50, -50)
-                        while color_left.color == ColorSensor.COLOR_BLACK:
-                            pass
-                    tank_drive.on_for_rotations(25, 25, 20 * TIRE_CONST)
-                    return True
                 tank_drive.on_for_rotations(-25, -25, 50 * TIRE_CONST)
                 check_for_black = False
                 return False
