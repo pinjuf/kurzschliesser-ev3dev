@@ -224,16 +224,18 @@ def handle_intersection():
                 tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
                 if ttrig: # T-Crossing detector was triggered
                     if last_turn == "right":
-                        tank_drive.on(50, -50)
-                        while color_right.color != ColorSensor.COLOR_BLACK:
-                            pass
+                        if color_right.color != ColorSensor.COLOR_BLACK:
+                            tank_drive.on(50, -50)
+                            while color_right.color != ColorSensor.COLOR_BLACK:
+                                pass
                         tank_drive.on(-50, 50)
                         while color_right.color == ColorSensor.COLOR_BLACK:
                             pass
                     if last_turn == "left":
-                        tank_drive.on(-50, 50)
-                        while color_left.color != ColorSensor.COLOR_BLACK:
-                            pass
+                        if color_left.color != ColorSensor.COLOR_BLACK:
+                            tank_drive.on(-50, 50)
+                            while color_left.color != ColorSensor.COLOR_BLACK:
+                                pass
                         tank_drive.on(50, -50)
                         while color_left.color == ColorSensor.COLOR_BLACK:
                             pass
