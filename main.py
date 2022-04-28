@@ -221,23 +221,25 @@ def handle_intersection():
             tank_drive.stop()
 
             if not found: # nothing found, check ttrig and/or move back
+                tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
                 if ttrig: # T-Crossing detector was triggered
                     if last_turn == "right":
                         tank_drive.on(50, -50)
-                        while color_left.color != ColorSensor.COLOR_BLACK:
+                        while color_right.color != ColorSensor.COLOR_BLACK:
                             pass
-                        while color_left.color == ColorSensor.COLOR_BLACK:
+                        tank_drive.on(-50, 50)
+                        while color_right.color == ColorSensor.COLOR_BLACK:
                             pass
                     if last_turn == "left":
                         tank_drive.on(-50, 50)
-                        while color_right.color != ColorSensor.COLOR_BLACK:
+                        while color_left.color != ColorSensor.COLOR_BLACK:
                             pass
-                        while color_right.color == ColorSensor.COLOR_BLACK:
+                        tank_drive.on(50, -50)
+                        while color_left.color == ColorSensor.COLOR_BLACK:
                             pass
-                    tank_drive.stop()
+                    tank_drive.on_for_rotations(25, 25, 20 * TIRE_CONST)
                     return True
-                tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
-                tank_drive.on_for_rotations(-25, -25, 67.5 * TIRE_CONST)
+                tank_drive.on_for_rotations(-25, -25, 50 * TIRE_CONST)
                 check_for_black = False
                 return False
             else:
@@ -354,7 +356,7 @@ def lmain():
             rescue_can()
             exit(0)
 
-        elif ultrasound.distance_centimeters < 7: # we VERY close to a (suspected) wall
+        elif ultrasound.distance_centimeters < 7 and OBSTACLE_AVOIDANCE: # we VERY close to a (suspected) wall
             tank_drive.on_for_rotations(-25, -25, 70 * TIRE_CONST)
             handle_obstacle()
 
@@ -398,9 +400,6 @@ def lmain():
                 if color_left.color == ColorSensor.COLOR_BLACK:
                     break
                 tank_drive.on(-25, 50)
-
-        # TODO: trigger when ball room is detected
-
         else:
             tank_drive.on(50, 50)
 
