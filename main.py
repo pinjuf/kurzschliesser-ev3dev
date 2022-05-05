@@ -35,8 +35,8 @@ def init():
 
         color_left = ColorSensor(INPUT_3)
         color_right = ColorSensor(INPUT_2)
-        color_left.mode = ColorSensor.MODE_COL_COLOR
-        color_right.mode = ColorSensor.MODE_COL_COLOR
+        color_left.mode = ColorSensor.MODE_RGB_RAW
+        color_right.mode = ColorSensor.MODE_RGB_RAW
 
         gyro = GyroSensor(INPUT_1)
         tank_drive.gyro = gyro
@@ -53,7 +53,7 @@ def stop_beep_continue():
     speed_a, speed_b = tank_drive.left_motor.speed_sp, tank_drive.right_motor.speed_sp
     tank_drive.off()
     sound.beep("-f 440")
-    tank_drive.on(speed_a, speed_b)
+    tank_drive.on(100*speed_a/tank_drive.left_motor.max_speed, 100*speed_b/tank_drive.right_motor.max_speed)
 
 def force_claw_lift_down():
     """
@@ -106,23 +106,23 @@ def read_green_markers(): # read markers and return as 2-bit number bcuz i like 
     Wrapper that reads the current state of the markers.
     Outputs a 2-bit number, high bit represents the left.
     """
-    return ((color_left.color == ColorSensor.COLOR_GREEN) << 1) \
-          | (color_right.color == ColorSensor.COLOR_GREEN)
+    return ((eval_color(color_left.rgb) == 'green') << 1) \
+          | (eval_color(color_right.rgb) == 'green')
 
 def eval_color(color):
     """
     Evaluate a RGB color tuple.
     """
     r, g, b = color
-    maxc    = min(max(color), 100) # Extrapolate to 255
+    maxc    = max(max(color), 100) # Extrapolate to 255
     r *= 255/maxc
     g *= 255/maxc
     b *= 255/maxc
 
-    min_diff = 256*3
+    min_diff = 255*3
     out = 0
     for c in COLORS:
-        t, h, n = c
+        t, h, n = COLORS[c]
         diff = abs(r-t) \
              + abs(g-h) \
              + abs(b-n)
@@ -143,13 +143,13 @@ def snoop(): # try finding a maximum amount of markers
 
     tank_drive.on(-25, 25) # start turning right
     start = time.time()
-    while color_left.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.4 * TIME_CONST:
+    while eval_color(color_left.rgb) != 'black' and time.time() - start <= 0.4 * TIME_CONST:
         output |= read_green_markers()
     total1 = time.time() - start # total time rotating right
 
     tank_drive.on(25, -25) # start turning left
     start = time.time()
-    while color_right.color != ColorSensor.COLOR_BLACK and time.time() - start <= 0.8 * TIME_CONST: # check but with double the time
+    while eval_color(color_right.rgb) != 'black' and time.time() - start <= 0.8 * TIME_CONST: # check but with double the time
         output |= read_green_markers()
     total2 = time.time() - start # total time rotating left
 
@@ -190,7 +190,7 @@ def handle_intersection():
     """
     global check_for_black # OOOOOOO scary global var
 
-    if color_left.color == color_right.color == ColorSensor.COLOR_BLACK == check_for_black: # we hit a black line at 90 degs
+    if eval_color(color_left.rgb) == eval_color(color_right.rgb) == 'black' == check_for_black: # we hit a black line at 90 degs
         tank_drive.on_for_rotations(-25, -25, 30 * TIRE_CONST) # check if we missed green markers
         markers = snoop()
         if not markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
@@ -200,12 +200,12 @@ def handle_intersection():
                 start, found = time.time(), False
                 tank_drive.on(50, -50) # rotate to check if there is black
                 while time.time() <= start + 0.4 * TIME_CONST:
-                    if color_right.color == ColorSensor.COLOR_BLACK:
+                    if eval_color(color_right.rgb) == 'black':
                         found = True
                         break
 
-                    if color_left.color == ColorSensor.COLOR_BLACK:
-                        while color_left.color == ColorSensor.COLOR_BLACK:
+                    if eval_color(color_left.rgb) == 'black':
+                        while eval_color(color_left.rgb) == 'black':
                             pass
                         tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST)
                         return True
@@ -214,12 +214,12 @@ def handle_intersection():
                 start, found = time.time(), False
                 tank_drive.on(-50, 50)
                 while time.time() <= start + 0.4 * TIME_CONST:
-                    if color_left.color == ColorSensor.COLOR_BLACK:
+                    if eval_color(color_left.rgb) == 'black':
                         found = True
                         break
 
-                    if color_right.color == ColorSensor.COLOR_BLACK:
-                        while color_right.color == ColorSensor.COLOR_BLACK:
+                    if eval_color(color_right.rgb) == 'black':
+                        while eval_color(color_right.rgb) == 'black':
                             pass
                         tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST)
                         return True
@@ -235,7 +235,7 @@ def handle_intersection():
         handle_snooped(markers)
         return True
 
-    if ColorSensor.COLOR_GREEN in [color_left.color, color_right.color]: # found marker directly
+    if 'green' in [eval_color(color_left.rgb), eval_color(color_right.rgb)]: # found marker directly
         markers = snoop()
         handle_snooped(markers)
         return True
@@ -308,6 +308,8 @@ def calibrate_and_ready():
     print("done.\nWaiting for calibration signal... ", end="")
     buttons.wait_for_bump("enter")
     gyro.calibrate()
+    color_left.calibrate_white()
+    color_right.calibrate_white()
     sound.beep()
 
     if RESCUE_KIT:
@@ -355,9 +357,9 @@ def lmain():
         check_for_black = True # set up for handle_intersection()
         broken = False # there has got to be a better way to do this
 
-        if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
-            tank_drive.stop()
-        elif ColorSensor.COLOR_RED in [color_left.color, color_right.color]: # we fucking did it, we are at the rescue zone
+        #if ColorSensor.COLOR_NOCOLOR in [eval_color(color_left.rgb), eval_color(color_right.rgb)]: # invalid readings, stop!
+        #    tank_drive.stop()
+        if 'red' in [eval_color(color_left.rgb), eval_color(color_right.rgb)]: # we fucking did it, we are at the rescue zone
             stop_beep_continue()
             set_claw_lift("down")
             tank_drive.on_for_rotations(50, 50, 300 * TIRE_CONST)
@@ -372,10 +374,10 @@ def lmain():
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
             continue
 
-        elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
+        elif eval_color(color_left.rgb) == 'black': # turn left
             last_turn = "left"
             tank_drive.stop()
-            while color_left.color == ColorSensor.COLOR_BLACK:
+            while eval_color(color_left.rgb) == 'black':
                 if handle_intersection(): # check for intersection
                     broken = True
                     break
@@ -387,14 +389,14 @@ def lmain():
             while time.time()-start <= 0.3 * TIME_CONST: # drive a little bit further than necessary as to center on the line
                 if handle_intersection():
                     break
-                if color_right.color == ColorSensor.COLOR_BLACK:
+                if eval_color(color_right.rgb) == 'black':
                     break
                 tank_drive.on(50, -25)
 
-        elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
+        elif eval_color(color_right.rgb) == 'black': # turn right
             last_turn = "right"
             tank_drive.stop()
-            while color_right.color == ColorSensor.COLOR_BLACK:
+            while eval_color(color_right.rgb) == 'black':
                 if handle_intersection():
                     broken = True
                     break
@@ -406,7 +408,7 @@ def lmain():
             while time.time()-start <= 0.3 * TIME_CONST:
                 if handle_intersection():
                     break
-                if color_left.color == ColorSensor.COLOR_BLACK:
+                if eval_color(color_left.rgb) == 'black':
                     break
                 tank_drive.on(-25, 50)
         else:
