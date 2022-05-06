@@ -376,6 +376,8 @@ def lmain():
 
         elif ColorSensor.COLOR_YELLOW in [color_left.color, color_right.color] and TRACK_VICTIM_DETECTION: # we found a victim
             stop_beep_continue()
+            while ColorSensor.COLOR_YELLOW in [color_left.color, color_right.color]:
+                tank_drive.on(50, 50)
 
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
             continue
