@@ -365,8 +365,7 @@ def drive_to_corner():
     tank_drive.turn_degrees(50, 90)
     find_shortest_distance_to_next_wall()
     tank_drive.turn_degrees(50, 180)
-    
-    
+
 def spiral_algo():
     length = 400
     delta = 100
@@ -384,7 +383,10 @@ def spiral_algo():
     set_claw_lift("down")
 
 def resc_orientate():
-    pass
+    tank_drive.on_for_rotations(-50, -50, 100 * TIRE_CONST)
+    tank_drive.turn_degrees(-50, 90)
+    tank_drive.on_for_rotations(50, 50, (ultrasound.distance_centimeters * 10 -100) * TIRE_CONST)
+    tank_drive.turn_degrees(-50, -90)
 
 def rescue_can():
     banzai_into_wall()
@@ -410,7 +412,6 @@ def lmain():
             tank_drive.on_for_rotations(50, 50, 300 * TIRE_CONST)
             set_claw_lift("up")
             rescue_can()
-            exit(0)
 
         elif ultrasound.distance_centimeters < 7 and OBSTACLE_AVOIDANCE: # we VERY close to a (suspected) wall
             tank_drive.on_for_rotations(-25, -25, 70 * TIRE_CONST)
@@ -526,6 +527,5 @@ def bmain():
 if __name__ == "__main__":
     init()
     calibrate_and_ready()
-    find_shortest_distance_to_next_wall()
-    #spiral_algo()
+    rescue_can()
     #lmain()
