@@ -53,7 +53,7 @@ def stop_beep_continue():
     speed_a, speed_b = tank_drive.left_motor.speed_sp, tank_drive.right_motor.speed_sp
     tank_drive.off()
     sound.beep("-f 440")
-    tank_drive.on(speed_a, speed_b)
+    tank_drive.on(100*speed_a/tank_drive.left_motor.max_speed, 100*speed_b/tank_drive.right_motor.max_speed)
 
 def force_claw_lift_down():
     """
@@ -199,7 +199,7 @@ def handle_intersection():
             if last_turn == "right":
                 start, found = time.time(), False
                 tank_drive.on(50, -50) # rotate to check if there is black
-                while time.time() <= start + 0.4 * TIME_CONST:
+                while time.time() <= start + 0.6 * TIME_CONST:
                     if color_right.color == ColorSensor.COLOR_BLACK:
                         found = True
                         break
@@ -213,7 +213,7 @@ def handle_intersection():
             if last_turn == "left":
                 start, found = time.time(), False
                 tank_drive.on(-50, 50)
-                while time.time() <= start + 0.4 * TIME_CONST:
+                while time.time() <= start + 0.6 * TIME_CONST:
                     if color_left.color == ColorSensor.COLOR_BLACK:
                         found = True
                         break
@@ -225,13 +225,18 @@ def handle_intersection():
                         return True
 
             if not found: # nothing found, check ttrig and/or move back
-                tank_drive.on_for_seconds(-50, 50, 0.4 * TIME_CONST)
-                tank_drive.on_for_rotations(-25, -25, 50 * TIRE_CONST)
+                if last_turn == "right":
+                    tank_drive.on_for_seconds(-50, 50, 0.6 * TIME_CONST)
+                if last_turn == "left":
+                    tank_drive.on_for_seconds(50, -50, 0.6 * TIME_CONST)
+
+                tank_drive.on_for_rotations(-25, -25, 65 * TIRE_CONST)
                 check_for_black = False
                 return False
             else:
                 tank_drive.on_for_rotations(25, 25, 5 * TIRE_CONST)
             return True
+
         handle_snooped(markers)
         return True
 
@@ -369,6 +374,11 @@ def lmain():
         elif ultrasound.distance_centimeters < 7 and OBSTACLE_AVOIDANCE: # we VERY close to a (suspected) wall
             tank_drive.on_for_rotations(-25, -25, 70 * TIRE_CONST)
             handle_obstacle()
+
+        elif ColorSensor.COLOR_YELLOW in [color_left.color, color_right.color] and TRACK_VICTIM_DETECTION: # we found a victim
+            stop_beep_continue()
+            while ColorSensor.COLOR_YELLOW in [color_left.color, color_right.color]:
+                tank_drive.on(50, 50)
 
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
             continue
