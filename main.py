@@ -348,6 +348,22 @@ def snail_algorithm():
         back += width
         tank_drive.turn_degrees(-50, 90)
 
+def spiral_algo():
+    length = 400
+    delta = 100
+
+    while length > 0:
+        for _ in range(2):
+            set_claw_lift("up")
+            tank_drive.on_for_rotations(-50, -50, length * TIRE_CONST)
+            set_claw("open")
+            set_claw_lift("down")
+            tank_drive.on_for_rotations(50, -50, 90)
+
+        length -= delta
+
+    set_claw_lift("down")
+
 def rescue_can():
     pass
 
@@ -485,4 +501,5 @@ def bmain():
 if __name__ == "__main__":
     init()
     calibrate_and_ready()
-    lmain()
+    spiral_algo()
+    #lmain()
