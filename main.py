@@ -327,20 +327,24 @@ def calibrate_and_ready():
 
 def find_shortest_distance_to_next_wall():
     tank_drive.on(-25, 25)
-    old_dist = 0
-    dist = 0
+    old_dist = ultrasound.distance_centimeters
+    dist = ultrasound.distance_centimeters
 
     while old_dist >= dist:
         old_dist = dist
         dist = ultrasound.distance_centimeters
         sleep(0.01)
     tank_drive.on(25, -25)
+
+    old_dist = ultrasound.distance_centimeters
+    dist = ultrasound.distance_centimeters
+
     while old_dist >= dist:
         old_dist = dist
         dist = ultrasound.distance_centimeters
         sleep(0.01)
 
-    tank_drive.on_for_rotations(-50, -50, (dist * 10.0) * TIRE_CONST + 50)  # to drive into the wall
+    tank_drive.on_for_rotations(50, 50, (dist * 10.0) * TIRE_CONST)  # to drive into the wall
 
 def finish():
     def end():
@@ -348,8 +352,8 @@ def finish():
         tank_drive.turn_degrees(-50, 180)
         set_claw_lift("down")
         set_claw("open")
-        sound.beep("-f 440 -d 2000")
-        sys.exit(0)
+        sound.beep("-f 440 -l 2000")
+        exit(0)
 
     # check function
     check_green = lambda: ColorSensor.COLOR_GREEN in [color_left.color, color_right]
