@@ -334,7 +334,6 @@ def find_shortest_distance_to_next_wall():
         old_dist = dist
         dist = ultrasound.distance_centimeters
         sleep(0.01)
-    tank_drive.stop()
     tank_drive.on(25, -25)
     while old_dist >= dist:
         old_dist = dist
