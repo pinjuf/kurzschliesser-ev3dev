@@ -341,6 +341,7 @@ def snail_algorithm():
             tank_drive.on_for_rotations(50, 50, (width - back - old_back) * TIRE_CONST)
         old_back = back
         back += width
+        tank_drive.turn_degrees(-50, 90)
 
 def rescue_can():
     pass
