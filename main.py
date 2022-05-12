@@ -325,6 +325,23 @@ def calibrate_and_ready():
     buttons.wait_for_bump("enter")
     print("received.")
 
+def find_shortest_distance_to_next_wall():
+    tank_drive.on(-50, 50)
+    old_dist = 0
+    dist = 0
+
+    while old_dist >= dist:
+        dist = ultrasound.distance_centimeters
+        sleep(0.01)
+    tank_drive.stop()
+    tank_drive.on(-50, 50)
+    while old_dist >= dist:
+        dist = ultrasound.distance_centimeters
+        sleep(0.01)
+
+    tank_drive.on_for_rotations(-50, -50, (dist / 10.0) * TIRE_CONST + 50)  # to drive into the wall
+
+
 def get_wall():
     back = 200      # value has to be adjusted...
     tank_drive.on(50, 50)
