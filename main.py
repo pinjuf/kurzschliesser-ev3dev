@@ -325,26 +325,12 @@ def calibrate_and_ready():
     buttons.wait_for_bump("enter")
     print("received.")
 
-def find_shortest_distance_to_next_wall():
-    tank_drive.on(-25, 25)
-    old_dist = ultrasound.distance_centimeters
-    dist = ultrasound.distance_centimeters
+def banzai_into_wall():
+    tank_drive.on_for_rotations(50, 50, (ultrasound.distance_centimeters * 10.0) * TIRE_CONST)  # to drive into the wall
 
-    while old_dist >= dist:
-        old_dist = dist
-        dist = ultrasound.distance_centimeters
-        sleep(0.01)
-    tank_drive.on(25, -25)
-
-    old_dist = ultrasound.distance_centimeters
-    dist = ultrasound.distance_centimeters
-
-    while old_dist >= dist:
-        old_dist = dist
-        dist = ultrasound.distance_centimeters
-        sleep(0.01)
-
-    tank_drive.on_for_rotations(50, 50, (dist * 10.0) * TIRE_CONST)  # to drive into the wall
+    for _ in range(5):
+        tank_drive.left_motor.on_for_seconds(75, 1)
+        tank_drive.right_motor.on_for_seconds(75, 1)
 
 def finish():
     def end():
@@ -397,8 +383,12 @@ def spiral_algo():
 
     set_claw_lift("down")
 
+def resc_orientate():
+    pass
+
 def rescue_can():
-    find_shortest_distance_to_next_wall()
+    banzai_into_wall()
+    resc_orientate()
     spiral_algo()
     finish()
 
