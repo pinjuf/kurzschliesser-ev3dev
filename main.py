@@ -366,7 +366,7 @@ def finish():
         end()
 
     while True:
-        tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
+        tank_drive.on_for_rotations(100, 100, 50 * TIRE_CONST)
         tank_drive.turn_degrees(-50, 90)
         if check_green():
             end()
