@@ -137,7 +137,7 @@ def snoop(): # try finding a maximum amount of markers
     Outputs in the same format as 'read_green_markers()'.
     """
     tank_drive.stop()
-    sound.beep() # emotional support beep
+    #sound.beep() # emotional support beep
     tank_drive.on_for_rotations(50, 50, 5 * TIRE_CONST) # drive a little bit back
     output = read_green_markers() # initialize output, will be expanded during the actual snooping
 
@@ -160,7 +160,7 @@ def snoop(): # try finding a maximum amount of markers
         tank_drive.on_for_seconds(25, -25, total1-total2)
 
     if output: # found marker(s)!
-        sound.beep("-f 880") # VERY emotional support beep
+        #sound.beep("-f 880") # VERY emotional support beep
     tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST) # reset to original position
 
     return output
@@ -334,7 +334,6 @@ def banzai_into_wall():
 
 def finish():
     def end():
-        tank_drive.stop()
         tank_drive.turn_degrees(-50, 180)
         set_claw_lift("down")
         set_claw("open")
@@ -346,9 +345,6 @@ def finish():
 
     tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
     tank_drive.turn_degrees(-50, 90)
-    if check_green():
-        end()
-
     tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
     tank_drive.turn_degrees(-50, 90)
     if check_green():
