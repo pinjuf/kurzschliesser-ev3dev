@@ -342,6 +342,34 @@ def find_shortest_distance_to_next_wall():
 
     tank_drive.on_for_rotations(-50, -50, (dist * 10.0) * TIRE_CONST + 50)  # to drive into the wall
 
+def finish():
+    def end():
+        tank_drive.stop()
+        tank_drive.turn_degrees(-50, 180)
+        set_claw_lift("down")
+        set_claw("open")
+        sound.beep("-f 440 -d 2000")
+        sys.exit(0)
+
+    # check function
+    check_green = lambda: ColorSensor.COLOR_GREEN in [color_left.color, color_right]
+
+    tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
+    tank_drive.turn_degrees(-50, 90)
+    if check_green():
+        end()
+
+    tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
+    tank_drive.turn_degrees(-50, 90)
+    if check_green():
+        end()
+
+    while True:
+        tank_drive.on_for_rotations(100, 100, 50 * TIRE_CONST)
+        tank_drive.turn_degrees(-50, 90)
+        if check_green():
+            end()
+
 
 def get_wall():
     back = 200      # value has to be adjusted...
