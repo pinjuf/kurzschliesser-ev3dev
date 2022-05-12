@@ -326,20 +326,22 @@ def calibrate_and_ready():
     print("received.")
 
 def find_shortest_distance_to_next_wall():
-    tank_drive.on(-50, 50)
+    tank_drive.on(-25, 25)
     old_dist = 0
     dist = 0
 
     while old_dist >= dist:
+        old_dist = dist
         dist = ultrasound.distance_centimeters
         sleep(0.01)
     tank_drive.stop()
-    tank_drive.on(-50, 50)
+    tank_drive.on(25, -25)
     while old_dist >= dist:
+        old_dist = dist
         dist = ultrasound.distance_centimeters
         sleep(0.01)
 
-    tank_drive.on_for_rotations(-50, -50, (dist / 10.0) * TIRE_CONST + 50)  # to drive into the wall
+    tank_drive.on_for_rotations(-50, -50, (dist * 10.0) * TIRE_CONST + 50)  # to drive into the wall
 
 def finish():
     def end():
@@ -393,8 +395,26 @@ def snail_algorithm():
         back += width
         tank_drive.turn_degrees(-50, 90)
 
+def spiral_algo():
+    length = 400
+    delta = 100
+
+    while length > 0:
+        for _ in range(2):
+            set_claw_lift("up")
+            tank_drive.on_for_rotations(-50, -50, length * TIRE_CONST)
+            set_claw("open")
+            set_claw_lift("down")
+            tank_drive.turn_degrees(-50, 90)
+
+        length -= delta
+
+    set_claw_lift("down")
+
 def rescue_can():
-    pass
+    find_shortest_distance_to_next_wall()
+    spiral_algo()
+    finish()
 
 def lmain():
     """
@@ -530,4 +550,6 @@ def bmain():
 if __name__ == "__main__":
     init()
     calibrate_and_ready()
-    lmain()
+    find_shortest_distance_to_next_wall()
+    #spiral_algo()
+    #lmain()
