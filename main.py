@@ -321,7 +321,7 @@ def calibrate_and_ready():
     print("received.")
 
 def get_wall():
-    back = 20      # value has to be adjusted...
+    back = 200      # value has to be adjusted...
     tank_drive.on(50, 50)
     while not tank_drive.is_stalled:
         sleep(0.01)
@@ -338,7 +338,7 @@ def snail_algorithm():
     back += get_wall()
     while back + back < width:
         for _ in range(2):
-            tank_drive.on_for_rotations(50, 50, width - back - old_back)
+            tank_drive.on_for_rotations(50, 50, (width - back - old_back) * TIRE_CONST)
         old_back = back
         back += width
 
