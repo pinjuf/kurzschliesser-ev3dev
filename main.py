@@ -365,7 +365,7 @@ def drive_to_corner():
 
 def spiral_algo():
     length = 1000
-    delta = 750
+    delta = 75
 
     while length > 0:
         for _ in range(2):
