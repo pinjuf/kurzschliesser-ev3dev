@@ -363,7 +363,7 @@ def drive_to_corner():
     tank_drive.turn_degrees(50, 180)
 
 def spiral_algo():
-    length = 400
+    length = 1000
     delta = 100
 
     while length > 0:
