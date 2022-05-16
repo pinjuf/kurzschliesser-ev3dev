@@ -328,7 +328,7 @@ def calibrate_and_ready():
 def banzai_into_wall():
     tank_drive.on_for_rotations(50, 50, (ultrasound.distance_centimeters * 10.0) * TIRE_CONST)  # to drive into the wall
 
-    for _ in range(5):
+    for _ in range(4):
         tank_drive.left_motor.on_for_seconds(75, 1)
         tank_drive.right_motor.on_for_seconds(75, 1)
 
@@ -350,11 +350,12 @@ def finish():
     if check_green():
         end()
 
-    while True:
+    for _ in range(12):
         tank_drive.on_for_rotations(100, 100, 50 * TIRE_CONST)
         tank_drive.turn_degrees(-50, 90)
         if check_green():
             end()
+    end()
 
 def drive_to_corner():
     find_shortest_distance_to_next_wall()
@@ -364,7 +365,7 @@ def drive_to_corner():
 
 def spiral_algo():
     length = 1000
-    delta = 100
+    delta = 750
 
     while length > 0:
         for _ in range(2):
