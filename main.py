@@ -159,7 +159,7 @@ def snoop(): # try finding a maximum amount of markers
     if total2-total1 < 0:
         tank_drive.on_for_seconds(25, -25, total1-total2)
 
-    if output: # found marker(s)!
+    #if output: # found marker(s)!
         #sound.beep("-f 880") # VERY emotional support beep
     tank_drive.on_for_rotations(-50, -50, 5 * TIRE_CONST) # reset to original position
 
