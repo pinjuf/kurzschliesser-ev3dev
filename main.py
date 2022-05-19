@@ -524,5 +524,4 @@ def bmain():
 if __name__ == "__main__":
     init()
     calibrate_and_ready()
-    rescue_can()
-    #lmain()
+    lmain()
