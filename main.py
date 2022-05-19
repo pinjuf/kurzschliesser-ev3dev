@@ -196,6 +196,8 @@ def handle_intersection():
         if not markers: # Could've used beautiful walross operator, but our ev3dev has <3.8 Python
             tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST) # nothing missed, move back forward + 60 mm
 
+            found = False
+
             if last_turn == "right":
                 start, found = time.time(), False
                 tank_drive.on(50, -50) # rotate to check if there is black
@@ -341,17 +343,18 @@ def finish():
         exit(0)
 
     # check function
-    check_green = lambda: ColorSensor.COLOR_GREEN in [color_left.color, color_right]
+    def check_green():
+        return (ColorSensor.COLOR_GREEN in [color_right.color, color_left.color])
 
-    tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
+    tank_drive.on_for_rotations(50, 50, 100 * TIRE_CONST)
     tank_drive.turn_degrees(-50, 90)
-    tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
+    tank_drive.on_for_rotations(50, 50, 100 * TIRE_CONST)
     tank_drive.turn_degrees(-50, 90)
     if check_green():
         end()
 
     for _ in range(12):
-        tank_drive.on_for_rotations(100, 100, 50 * TIRE_CONST)
+        tank_drive.on_for_rotations(100, 100, 200 * TIRE_CONST)
         tank_drive.turn_degrees(-50, 90)
         if check_green():
             end()
@@ -364,7 +367,7 @@ def drive_to_corner():
     tank_drive.turn_degrees(50, 180)
 
 def spiral_algo():
-    length = 1000
+    length = 700
     delta = 75
 
     while length > 0:
@@ -396,6 +399,7 @@ def lmain():
     Main function of the robo.
     """
     global check_for_black, last_turn
+    last_turn = ""
 
     while True:
         check_for_black = True # set up for handle_intersection()
@@ -420,6 +424,7 @@ def lmain():
                 tank_drive.on(50, 50)
 
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
+            sound.beep()
             continue
 
         elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
