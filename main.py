@@ -52,7 +52,7 @@ def init():
 def stop_beep_continue():
     speed_a, speed_b = tank_drive.left_motor.speed_sp, tank_drive.right_motor.speed_sp
     tank_drive.off()
-    sound.beep("-f 440")
+    sound.beep("-f 440 -l 2000")
     tank_drive.on(100*speed_a/tank_drive.left_motor.max_speed, 100*speed_b/tank_drive.right_motor.max_speed)
 
 def force_claw_lift_down():
@@ -172,15 +172,15 @@ def handle_snooped(snooped):
     if snooped == MARKER_FOUND_B:
         tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST) # move forward as to be exactly on top of the intersection
         tank_drive.turn_degrees(50, 180)
-        tank_drive.on_for_rotations(25, 25, 25 * TIRE_CONST) # move forward to awoid green markers
+        tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST) # move forward to awoid green markers
     elif snooped == MARKER_FOUND_L:
         tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST)
         tank_drive.turn_degrees(-50, -90)
-        tank_drive.on_for_rotations(25, 25, 25 * TIRE_CONST)
+        tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST)
     elif snooped == MARKER_FOUND_R:
         tank_drive.on_for_rotations(25, 25, 90 * TIRE_CONST)
         tank_drive.turn_degrees(-50, 90)
-        tank_drive.on_for_rotations(25, 25, 25 * TIRE_CONST)
+        tank_drive.on_for_rotations(25, 25, 30 * TIRE_CONST)
 
 
 def handle_intersection():
@@ -383,7 +383,7 @@ def spiral_algo():
     set_claw_lift("down")
 
 def resc_orientate():
-    tank_drive.on_for_rotations(-50, -50, 100 * TIRE_CONST)
+    tank_drive.on_for_rotations(-50, -50, 50 * TIRE_CONST)
     tank_drive.turn_degrees(-50, 90)
     tank_drive.on_for_rotations(50, 50, (ultrasound.distance_centimeters * 10 -100) * TIRE_CONST)
     tank_drive.turn_degrees(-50, -90)
@@ -407,10 +407,10 @@ def lmain():
 
         if ColorSensor.COLOR_NOCOLOR in [color_left.color, color_right.color]: # invalid readings, stop!
             tank_drive.stop()
-        elif ColorSensor.COLOR_RED in [color_left.color, color_right.color]: # we fucking did it, we are at the rescue zone
+        elif (ColorSensor.COLOR_RED in [color_left.color, color_right.color]) or (ColorSensor.COLOR_YELLOW in [color_left.color, color_right.color]): # we fucking did it, we are at the rescue zone
             stop_beep_continue()
             if TRACK_VICTIM_DETECTION:
-                tank_drive.on_for_rotations(50, 50, 50 * TIRE_CONST)
+                tank_drive.on_for_rotations(50, 50, 75 * TIRE_CONST)
                 found = False
 
                 tank_drive.on(25, -25)
@@ -464,7 +464,7 @@ def lmain():
                 continue
 
             start = time.time()
-            while time.time()-start <= 0.3 * TIME_CONST: # drive a little bit further than necessary as to center on the line
+            while time.time()-start <= 0.15 * TIME_CONST: # drive a little bit further than necessary as to center on the line
                 if handle_intersection():
                     break
                 if color_right.color == ColorSensor.COLOR_BLACK:
@@ -483,7 +483,7 @@ def lmain():
                 continue
 
             start = time.time()
-            while time.time()-start <= 0.3 * TIME_CONST:
+            while time.time()-start <= 0.15 * TIME_CONST:
                 if handle_intersection():
                     break
                 if color_left.color == ColorSensor.COLOR_BLACK:
