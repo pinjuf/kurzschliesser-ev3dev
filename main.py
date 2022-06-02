@@ -398,8 +398,9 @@ def lmain():
     """
     Main function of the robo.
     """
-    global check_for_black, last_turn
+    global check_for_black, last_turn, gaps_timer
     last_turn = ""
+    gaps_timer = time.time()
 
     while True:
         check_for_black = True # set up for handle_intersection()
@@ -467,6 +468,7 @@ def lmain():
                 if color_right.color == ColorSensor.COLOR_BLACK:
                     break
                 tank_drive.on(50, -25)
+            gaps_timer = time.time()
 
         elif color_right.color == ColorSensor.COLOR_BLACK: # turn right
             last_turn = "right"
@@ -486,6 +488,49 @@ def lmain():
                 if color_left.color == ColorSensor.COLOR_BLACK:
                     break
                 tank_drive.on(-25, 50)
+            gaps_timer = time.time()
+
+        elif gaps_timer + GAPS_DETECTOR < time.time() and GAPS_DETECTOR:
+            found = False
+            start = time.time()
+            tank_drive.on(-25, 25)
+            while start + 0.8*TIME_CONST >= time.time():
+                found |= color_left.color == ColorSensor.COLOR_BLACK
+            tank_drive.on_for_seconds(25, -25, 0.8*TIME_CONST)
+
+            if found:
+                gaps_timer = time.time()
+                continue
+
+             # the regular line check failed, start looking
+
+            def wide_snoop():
+                tank_drive.on(25, -25)
+                start = time.time()
+                while start + 0.8*TIME_CONST >= time.time():
+                    if ColorSensor.COLOR_BLACK in (color_left.color, color_right.color):
+                        tank_drive.off()
+                        return True
+
+                tank_drive.on(-25, 25)
+                start = time.time()
+                while start + 1.6*TIME_CONST >= time.time():
+                    if ColorSensor.COLOR_BLACK in (color_left.color, color_right.color):
+                        tank_drive.off()
+                        return True
+                
+                tank_drive.on_for_seconds(25, -25, 0.8)
+                return False
+
+            stop_beep_continue()
+
+            for i in range(4):
+                if wide_snoop():
+                    gaps_timer = time.time()
+                    break
+
+                tank_drive.on_for_rotations(50, 50, 75 * TIRE_CONST)
+
         else:
             tank_drive.on(50, 50)
 
