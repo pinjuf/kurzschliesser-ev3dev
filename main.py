@@ -411,21 +411,24 @@ def lmain():
             stop_beep_continue()
             if TRACK_VICTIM_DETECTION:
                 tank_drive.on_for_rotations(50, 50, 75 * TIRE_CONST)
+
                 found = False
 
                 tank_drive.on(25, -25)
                 start = time.time()
                 while time.time() <= start + 0.6 * TIME_CONST:
-                    found = found or (color_left.color == ColorSensor.COLOR_BLACK) 
-                    if found: break
+                    if color_left.color == ColorSensor.COLOR_BLACK:
+                        found = True
+                        break
                 if found: continue
 
                 tank_drive.on(-25, 25)
                 start = time.time()
                 while time.time() <= start + 1.2 * TIME_CONST:
-                    found = found or (color_right.color == ColorSensor.COLOR_BLACK) 
-                    if found: break
+                    if color_right.color == ColorSensor.COLOR_BLACK:
+                        found = False
                 if found: continue
+
                 tank_drive.on_for_seconds(25, -25, 0.6 * TIME_CONST)
 
                 if not found:
@@ -443,13 +446,7 @@ def lmain():
             tank_drive.on_for_rotations(-25, -25, 70 * TIRE_CONST)
             handle_obstacle()
 
-        #elif ColorSensor.COLOR_YELLOW in [color_left.color, color_right.color] and TRACK_VICTIM_DETECTION: # we found a victim
-        #    stop_beep_continue()
-        #    while ColorSensor.COLOR_YELLOW in [color_left.color, color_right.color]:
-        #        tank_drive.on(50, 50)
-
         elif handle_intersection(): # handle_intersection() has found sth and reacted to it! start the loop again
-            sound.beep()
             continue
 
         elif color_left.color == ColorSensor.COLOR_BLACK: # turn left
