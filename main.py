@@ -433,7 +433,7 @@ def lmain():
                     tank_drive.on_for_rotations(50, 50, 300 * TIRE_CONST)
                     set_claw_lift("up")
                     rescue_can()
-            else:
+            elif KNAPP_RESCUE_ZONE:
                 set_claw_lift("down")
                 tank_drive.on_for_rotations(50, 50, 300 * TIRE_CONST)
                 set_claw_lift("up")
@@ -548,10 +548,10 @@ def find_zigzag():
             tank_drive.turn_degrees(-50, 90)
             turn_dir = "left"
 
-def bmain():
-    find_zigzag()
-
-if __name__ == "__main__":
+def knapp_sar():
     init()
     calibrate_and_ready()
     lmain()
+
+if __name__ == "__main__":
+    knapp_sar()
